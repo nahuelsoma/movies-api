@@ -72,6 +72,43 @@ export class MoviesRepository {
     }
   }
 
+  async delete(id: number): Promise<Movie> {
+    try {
+      return this.database.movie.delete({
+        where: { id },
+        select: {
+          id: true,
+          title: true,
+          opening_crawl: true,
+          release_date: true,
+          directors: {
+            select: {
+              name: true,
+              id: true,
+            },
+          },
+          producers: {
+            select: {
+              name: true,
+              id: true,
+            },
+          },
+          franchise: {
+            select: {
+              name: true,
+              id: true,
+            },
+          },
+        },
+      });
+    } catch (error) {
+      // enhace this error handling
+      console.log('error in MoviesRepository.delete: ', error.message);
+
+      return null;
+    }
+  }
+
   async findAll({ skip = 0, take = 10 }: FindAll): Promise<Movie[]> {
     try {
       return this.database.movie.findMany({

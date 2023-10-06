@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { MoviesRepository } from 'src/repositories/movies';
 import { CreateMovie, EditMovie, Movie } from 'src/repositories/movies/types';
 import { StarwarsRepository } from 'src/repositories/starwars';
-import { GetAll } from './types';
+import { DeleteResponse, GetAll } from './types';
 
 @Injectable()
 export class MoviesService {
@@ -31,6 +31,24 @@ export class MoviesService {
     } catch (error) {
       // enhace this error handling
       console.log('error in MoviesService.create: ', error.message);
+
+      return null;
+    }
+  }
+
+  async delete(id: number): Promise<DeleteResponse> {
+    try {
+      const deletedMovie = await this.moviesRepository.delete(id);
+
+      if (id === deletedMovie.id) {
+        return {
+          message: `Movie with id ${id} was deleted successfully`,
+          status: 'success',
+        };
+      }
+    } catch (error) {
+      // enhace this error handling
+      console.log('error in MoviesService.delete: ', error.message);
 
       return null;
     }
