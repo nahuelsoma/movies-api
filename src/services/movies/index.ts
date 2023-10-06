@@ -1,27 +1,71 @@
 import { Injectable } from '@nestjs/common';
+import { MoviesRepository } from 'src/repositories/movies';
+import { Movie } from 'src/repositories/movies/types';
 import { StarwarsRepository } from 'src/repositories/starwars';
+import { GetAll } from './types';
 
 @Injectable()
 export class MoviesService {
-  constructor(private readonly starwarsRepository: StarwarsRepository) {}
+  constructor(
+    private readonly starwarsRepository: StarwarsRepository,
+    private readonly moviesRepository: MoviesRepository,
+  ) {}
 
-  async getMovies(): Promise<Movie[]> {
+  async getAll({ limit, offset }: GetAll): Promise<Movie[]> {
     try {
-      const starwarsMovies = await this.starwarsRepository.getMovies();
+      return await this.moviesRepository.findAll({
+        skip: offset,
+        take: limit,
+      });
+    } catch (error) {
+      // enhace this error handling
+      console.log('error in MoviesService.getAll: ', error.message);
 
-      const movies = starwarsMovies.results.map((movie) => {
-        return {
-          title: movie.title,
-          opening_crawl: movie.opening_crawl,
-          director: movie.director,
-          producer: movie.producer,
-          release_date: movie.release_date,
-        };
+      return [];
+    }
+  }
+
+  async seedData(): Promise<Movie[]> {
+    try {
+      const starwarsMovies = await this.starwarsRepository.seedData();
+
+      const newMoviesPromises = starwarsMovies.results.map((movie) => {
+        const { title, opening_crawl, release_date, director, producer } =
+          movie;
+
+        return this.moviesRepository.create({
+          title: title,
+          openingCrawl: opening_crawl,
+          directorsNames: director.split(', '),
+          producersNames: producer.split(', '),
+          franchiseName: 'Star Wars',
+          releaseDate: new Date(release_date),
+        });
       });
 
-      return movies;
+      const newMoviesResults = await Promise.allSettled(newMoviesPromises);
+
+      if (newMoviesResults.some((newMovie) => newMovie.status === 'rejected')) {
+        const rejected = newMoviesResults.map((newMovie) => {
+          if (newMovie.status === 'rejected') {
+            return newMovie.reason;
+          }
+        });
+
+        // enhace this error handling
+        throw new Error(rejected.join(', '));
+      }
+
+      const newMovies = newMoviesResults.map((newMovie) => {
+        if (newMovie.status === 'fulfilled') {
+          return newMovie.value;
+        }
+      });
+
+      return newMovies;
     } catch (error) {
-      console.log('error in MoviesService.getMovies: ', error.message);
+      // enhace this error handling
+      console.log('error in MoviesService.seedData: ', error.message);
 
       return [];
     }
