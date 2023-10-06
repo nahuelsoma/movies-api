@@ -1,16 +1,17 @@
 import axios from 'axios';
 
 export class StarwarsRepository {
-  async getMovies(): Promise<Movies> {
+  async seedData(): Promise<StarwarsMovies> {
     try {
-      const { data } = await axios<Movies>({
+      const { data } = await axios<StarwarsMovies>({
         method: 'get',
         url: 'https://swapi.dev/api/films',
       });
 
       return data;
     } catch (error) {
-      console.log('error in StarwarsRepository.getMovies: ', error.message);
+      // enhace this error handling
+      console.log('error in StarwarsRepository.seedData: ', error.message);
 
       return { count: 0, results: [] };
     }
