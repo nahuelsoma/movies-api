@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Query, Body } from '@nestjs/common';
+import { Controller, Get, Post, Query, Body, Put, Param } from '@nestjs/common';
 import { Movie } from 'src/repositories/movies/types';
 import { MoviesService } from 'src/services/movies';
 
@@ -45,6 +45,46 @@ export class MoviesController {
     } catch (error) {
       // enhace this error handling
       console.log('error in MoviesController.create: ', error.message);
+
+      return null;
+    }
+  }
+
+  @Get(':id')
+  async getOne(@Param('id') id: string): Promise<Movie> {
+    try {
+      return await this.moviesService.getOne(parseInt(id));
+    } catch (error) {
+      // enhace this error handling
+      console.log('error in MoviesController.getOne: ', error.message);
+
+      return null;
+    }
+  }
+
+  @Put(':id')
+  async update(
+    @Param('id') id: string,
+    @Body('title') title?: string,
+    @Body('opening_crawl') openingCrawl?: string,
+    @Body('release_date') releaseDate?: string,
+    @Body('directors_names') directorsNames?: string[],
+    @Body('producers_names') producersNames?: string[],
+    @Body('franchise_name') franchiseName?: string,
+  ): Promise<Movie> {
+    try {
+      return await this.moviesService.update({
+        id: parseInt(id),
+        title,
+        openingCrawl,
+        releaseDate: releaseDate && new Date(releaseDate),
+        directorsNames,
+        producersNames,
+        franchiseName,
+      });
+    } catch (error) {
+      // enhace this error handling
+      console.log('error in MoviesController.update: ', error.message);
 
       return null;
     }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { MoviesRepository } from 'src/repositories/movies';
-import { CreateMovie, Movie } from 'src/repositories/movies/types';
+import { CreateMovie, EditMovie, Movie } from 'src/repositories/movies/types';
 import { StarwarsRepository } from 'src/repositories/starwars';
 import { GetAll } from './types';
 
@@ -50,6 +50,17 @@ export class MoviesService {
     }
   }
 
+  async getOne(id: number): Promise<Movie> {
+    try {
+      return await this.moviesRepository.findOne(id);
+    } catch (error) {
+      // enhace this error handling
+      console.log('error in MoviesService.getOne: ', error.message);
+
+      return null;
+    }
+  }
+
   async seedData(): Promise<Movie[]> {
     try {
       const starwarsMovies = await this.starwarsRepository.seedData();
@@ -93,6 +104,33 @@ export class MoviesService {
       console.log('error in MoviesService.seedData: ', error.message);
 
       return [];
+    }
+  }
+
+  async update({
+    id,
+    title,
+    openingCrawl,
+    releaseDate,
+    directorsNames,
+    producersNames,
+    franchiseName,
+  }: EditMovie): Promise<Movie> {
+    try {
+      return await this.moviesRepository.update({
+        id,
+        title,
+        openingCrawl,
+        releaseDate,
+        directorsNames,
+        producersNames,
+        franchiseName,
+      });
+    } catch (error) {
+      // enhace this error handling
+      console.log('error in MoviesService.update: ', error.message);
+
+      return null;
     }
   }
 }
