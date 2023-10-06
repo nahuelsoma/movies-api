@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { MoviesRepository } from 'src/repositories/movies';
 import { Movie } from 'src/repositories/movies/types';
 import { StarwarsRepository } from 'src/repositories/starwars';
+import { GetAll } from './types';
 
 @Injectable()
 export class MoviesService {
@@ -9,6 +10,20 @@ export class MoviesService {
     private readonly starwarsRepository: StarwarsRepository,
     private readonly moviesRepository: MoviesRepository,
   ) {}
+
+  async getAll({ limit, offset }: GetAll): Promise<Movie[]> {
+    try {
+      return await this.moviesRepository.findAll({
+        skip: offset,
+        take: limit,
+      });
+    } catch (error) {
+      // enhace this error handling
+      console.log('error in MoviesService.getAll: ', error.message);
+
+      return [];
+    }
+  }
 
   async seedData(): Promise<Movie[]> {
     try {

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseRepository } from '../database';
-import { CreateMovie, Movie } from './types';
+import { CreateMovie, FindAll, Movie } from './types';
 
 @Injectable()
 export class MoviesRepository {
@@ -69,6 +69,44 @@ export class MoviesRepository {
       console.log('error in MoviesRepository.create: ', error.message);
 
       return null;
+    }
+  }
+
+  async findAll({ skip = 0, take = 10 }: FindAll): Promise<Movie[]> {
+    try {
+      return this.database.movie.findMany({
+        skip,
+        take,
+        select: {
+          id: true,
+          title: true,
+          opening_crawl: true,
+          release_date: true,
+          directors: {
+            select: {
+              name: true,
+              id: true,
+            },
+          },
+          producers: {
+            select: {
+              name: true,
+              id: true,
+            },
+          },
+          franchise: {
+            select: {
+              name: true,
+              id: true,
+            },
+          },
+        },
+      });
+    } catch (error) {
+      // enhace this error handling
+      console.log('error in MoviesRepository.findAll: ', error.message);
+
+      return [];
     }
   }
 }

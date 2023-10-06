@@ -9,6 +9,10 @@ export interface CreateMovie {
   franchiseName: string;
 }
 
+export interface FindAll {
+  skip?: number;
+  take?: number;
+}
 export interface Movie {
   id: number;
   title: string;
