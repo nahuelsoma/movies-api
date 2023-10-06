@@ -9,6 +9,16 @@ export interface CreateMovie {
   franchiseName: string;
 }
 
+export interface EditMovie {
+  id: number;
+  title?: string;
+  openingCrawl?: string;
+  releaseDate?: Date;
+  directorsNames?: string[];
+  producersNames?: string[];
+  franchiseName?: string;
+}
+
 export interface FindAll {
   skip?: number;
   take?: number;
