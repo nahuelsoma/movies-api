@@ -1,6 +1,16 @@
-import { Controller, Get, Post, Query, Body, Put, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Query,
+  Body,
+  Put,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { Movie } from 'src/repositories/movies/types';
 import { MoviesService } from 'src/services/movies';
+import { DeleteResponse } from 'src/services/movies/types';
 
 @Controller('movies')
 export class MoviesController {
@@ -85,6 +95,18 @@ export class MoviesController {
     } catch (error) {
       // enhace this error handling
       console.log('error in MoviesController.update: ', error.message);
+
+      return null;
+    }
+  }
+
+  @Delete(':id')
+  async delete(@Param('id') id: string): Promise<DeleteResponse> {
+    try {
+      return await this.moviesService.delete(parseInt(id));
+    } catch (error) {
+      // enhace this error handling
+      console.log('error in MoviesController.delete: ', error.message);
 
       return null;
     }
