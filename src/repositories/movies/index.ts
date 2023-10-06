@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseRepository } from '../database';
+import { Database } from '../../infrastructure/database';
 import { CreateMovie, FindAll, Movie } from './types';
 
 @Injectable()
 export class MoviesRepository {
-  constructor(private database: DatabaseRepository) {}
+  constructor(private database: Database) {}
 
   async create({
     title,

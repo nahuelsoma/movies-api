@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { MoviesRepository } from 'src/repositories/movies';
-import { Movie } from 'src/repositories/movies/types';
+import { CreateMovie, Movie } from 'src/repositories/movies/types';
 import { StarwarsRepository } from 'src/repositories/starwars';
 import { GetAll } from './types';
 
@@ -10,6 +10,31 @@ export class MoviesService {
     private readonly starwarsRepository: StarwarsRepository,
     private readonly moviesRepository: MoviesRepository,
   ) {}
+
+  async create({
+    title,
+    openingCrawl,
+    releaseDate,
+    directorsNames,
+    producersNames,
+    franchiseName,
+  }: CreateMovie): Promise<Movie> {
+    try {
+      return await this.moviesRepository.create({
+        title,
+        openingCrawl,
+        releaseDate,
+        directorsNames,
+        producersNames,
+        franchiseName,
+      });
+    } catch (error) {
+      // enhace this error handling
+      console.log('error in MoviesService.create: ', error.message);
+
+      return null;
+    }
+  }
 
   async getAll({ limit, offset }: GetAll): Promise<Movie[]> {
     try {
