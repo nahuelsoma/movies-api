@@ -8,7 +8,9 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
+import { Public, Roles } from 'src/decorators';
 import { Movie } from 'src/repositories/movies/types';
+import { RoleEnum } from 'src/repositories/users/types';
 import { MoviesService } from 'src/services/movies';
 import { DeleteResponse } from 'src/services/movies/types';
 
@@ -16,6 +18,7 @@ import { DeleteResponse } from 'src/services/movies/types';
 export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
 
+  @Public()
   @Get()
   async getAll(
     @Query('limit') limit?: string,
@@ -34,6 +37,7 @@ export class MoviesController {
     }
   }
 
+  @Roles(RoleEnum.ADMIN)
   @Post()
   async create(
     @Body('title') title?: string,
@@ -60,6 +64,7 @@ export class MoviesController {
     }
   }
 
+  @Roles(...[RoleEnum.ADMIN, RoleEnum.REGULAR])
   @Get(':id')
   async getOne(@Param('id') id: string): Promise<Movie> {
     try {
@@ -72,6 +77,7 @@ export class MoviesController {
     }
   }
 
+  @Roles(RoleEnum.ADMIN)
   @Put(':id')
   async update(
     @Param('id') id: string,
@@ -100,6 +106,7 @@ export class MoviesController {
     }
   }
 
+  @Roles(RoleEnum.ADMIN)
   @Delete(':id')
   async delete(@Param('id') id: string): Promise<DeleteResponse> {
     try {
@@ -112,6 +119,7 @@ export class MoviesController {
     }
   }
 
+  @Roles(RoleEnum.ADMIN)
   @Post('/seed')
   async seedData(): Promise<Movie[]> {
     try {
