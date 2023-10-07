@@ -46,11 +46,11 @@ CREATE TABLE "User" (
 );
 
 -- CreateTable
-CREATE TABLE "UserRole" (
+CREATE TABLE "Role" (
     "id" SERIAL NOT NULL,
-    "role" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
 
-    CONSTRAINT "UserRole_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Role_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -81,7 +81,7 @@ CREATE UNIQUE INDEX "Franchise_name_key" ON "Franchise"("name");
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "UserRole_role_key" ON "UserRole"("role");
+CREATE UNIQUE INDEX "Role_name_key" ON "Role"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_MovieToProducer_AB_unique" ON "_MovieToProducer"("A", "B");
@@ -102,7 +102,7 @@ ALTER TABLE "Movie" ADD CONSTRAINT "Movie_franchise_id_fkey" FOREIGN KEY ("franc
 ALTER TABLE "Movie" ADD CONSTRAINT "Movie_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "User" ADD CONSTRAINT "User_role_id_fkey" FOREIGN KEY ("role_id") REFERENCES "UserRole"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "User" ADD CONSTRAINT "User_role_id_fkey" FOREIGN KEY ("role_id") REFERENCES "Role"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_MovieToProducer" ADD CONSTRAINT "_MovieToProducer_A_fkey" FOREIGN KEY ("A") REFERENCES "Movie"("id") ON DELETE CASCADE ON UPDATE CASCADE;
