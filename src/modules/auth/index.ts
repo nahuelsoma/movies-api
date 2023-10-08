@@ -17,7 +17,6 @@ import { PassportModule } from '@nestjs/passport';
       signOptions: { expiresIn: '1h' },
     }),
   ],
-
   providers: [
     AuthService,
     {

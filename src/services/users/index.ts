@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { UsersRepository } from 'src/repositories/users';
 import {
   CreateUser,
@@ -18,7 +18,7 @@ export class UsersService {
     role = RoleEnum.REGULAR,
   }: CreateUser): Promise<User> {
     try {
-      return this.usersRepository.create({
+      return await this.usersRepository.create({
         name,
         email,
         password,
@@ -28,7 +28,7 @@ export class UsersService {
       // enhace this error handling
       console.log('error in UsersService.create: ', error.message);
 
-      return null;
+      throw new InternalServerErrorException('Error creating user');
     }
   }
 
@@ -39,7 +39,7 @@ export class UsersService {
     favorites,
   }: FindOneUser): Promise<User | null> {
     try {
-      return this.usersRepository.findOne({
+      return await this.usersRepository.findOne({
         id,
         email,
         isLogin,
@@ -49,7 +49,7 @@ export class UsersService {
       // enhace this error handling
       console.log('error in UsersService.getOne: ', error.message);
 
-      return null;
+      throw new InternalServerErrorException('Error getting user');
     }
   }
 }
