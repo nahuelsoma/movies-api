@@ -7,6 +7,7 @@ import {
   Put,
   Param,
   Delete,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { Public, Roles } from 'src/decorators';
 import { Movie } from 'src/repositories/movies/types';
@@ -33,18 +34,18 @@ export class MoviesController {
       // enhace this error handling
       console.log('error in MoviesController.getAll: ', error.message);
 
-      return [];
+      throw new InternalServerErrorException('Error getting movies');
     }
   }
 
   @Roles(RoleEnum.ADMIN)
   @Post()
   async create(
-    @Body('title') title?: string,
-    @Body('opening_crawl') openingCrawl?: string,
-    @Body('release_date') releaseDate?: string,
-    @Body('directors_names') directorsNames?: string[],
-    @Body('producers_names') producersNames?: string[],
+    @Body('title') title: string,
+    @Body('opening_crawl') openingCrawl: string,
+    @Body('release_date') releaseDate: string,
+    @Body('directors_names') directorsNames: string[],
+    @Body('producers_names') producersNames: string[],
     @Body('franchise_name') franchiseName?: string,
   ): Promise<Movie> {
     try {
@@ -60,7 +61,7 @@ export class MoviesController {
       // enhace this error handling
       console.log('error in MoviesController.create: ', error.message);
 
-      return null;
+      throw new InternalServerErrorException('Error creating movie');
     }
   }
 
@@ -73,7 +74,7 @@ export class MoviesController {
       // enhace this error handling
       console.log('error in MoviesController.getOne: ', error.message);
 
-      return null;
+      throw new InternalServerErrorException('Error getting movie');
     }
   }
 
@@ -102,7 +103,7 @@ export class MoviesController {
       // enhace this error handling
       console.log('error in MoviesController.update: ', error.message);
 
-      return null;
+      throw new InternalServerErrorException('Error updating movie');
     }
   }
 
@@ -115,7 +116,7 @@ export class MoviesController {
       // enhace this error handling
       console.log('error in MoviesController.delete: ', error.message);
 
-      return null;
+      throw new InternalServerErrorException('Error deleting movie');
     }
   }
 
@@ -128,7 +129,7 @@ export class MoviesController {
       // enhace this error handling
       console.log('error in MoviesController.seedData: ', error.message);
 
-      return [];
+      throw new InternalServerErrorException('Error seeding data');
     }
   }
 }
