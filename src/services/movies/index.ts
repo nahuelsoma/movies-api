@@ -43,31 +43,12 @@ export class MoviesService {
   }
 
   async delete(id: number): Promise<DeleteResponse> {
-    try {
-      const deletedMovie = await this.moviesRepository.delete(id);
+    const deletedMovie = await this.moviesRepository.delete(id);
 
-      if (id === deletedMovie.id) {
-        return {
-          message: `Movie with id ${id} was deleted successfully`,
-          status: 'success',
-        };
-      }
-
-      throw new ConflictException(`Movie with id ${id} was not deleted`);
-    } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError ||
-        error instanceof PrismaClientValidationError
-      ) {
-        throw error;
-      }
-
-      const message = `Error deleting movie with id ${id}`;
-
-      this.logger.error(message, error.stack, 'InternalServerErrorException');
-
-      throw new InternalServerErrorException(message, error.message);
-    }
+    return {
+      message: `Movie with id ${deletedMovie.id} was deleted successfully`,
+      status: 'success',
+    };
   }
 
   async getAll({ limit, offset }: GetAll): Promise<Movie[]> {
@@ -107,19 +88,6 @@ export class MoviesService {
 
       const newMoviesResults = await Promise.allSettled(newMoviesPromises);
 
-      if (newMoviesResults.some((newMovie) => newMovie.status === 'rejected')) {
-        const rejected = newMoviesResults.map((newMovie) => {
-          if (newMovie.status === 'rejected') {
-            return newMovie.reason;
-          }
-        });
-
-        throw new InternalServerErrorException(
-          'Error seeding movies',
-          rejected.join(', '),
-        );
-      }
-
       const newMovies = newMoviesResults.map((newMovie) => {
         if (newMovie.status === 'fulfilled') {
           return newMovie.value;
@@ -129,9 +97,9 @@ export class MoviesService {
       return newMovies;
     } catch (error) {
       if (
+        error instanceof AxiosError ||
         error instanceof PrismaClientKnownRequestError ||
         error instanceof PrismaClientValidationError ||
-        error instanceof AxiosError ||
         error instanceof HttpException
       ) {
         throw error;
