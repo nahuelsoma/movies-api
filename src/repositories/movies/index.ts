@@ -138,7 +138,7 @@ export class MoviesRepository {
     }
   }
 
-  async findAll({ skip = 0, take = 10 }: FindAll): Promise<Movie[]> {
+  async findAll({ skip, take }: FindAll): Promise<Movie[]> {
     try {
       return await this.database.movie.findMany({
         skip,

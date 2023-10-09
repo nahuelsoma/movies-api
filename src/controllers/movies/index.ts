@@ -9,6 +9,13 @@ import {
   Delete,
 } from '@nestjs/common';
 import { Public, Roles } from 'src/decorators';
+import {
+  GetAllMoviesSchema,
+  CreateMovieSchema,
+  DeleteMovieSchema,
+  GetMovieSchema,
+  UpdateMovieSchema,
+} from 'src/schemas/movies';
 import { Movie } from 'src/repositories/movies/types';
 import { RoleEnum } from 'src/repositories/users/types';
 import { MoviesService } from 'src/services/movies';
@@ -21,25 +28,28 @@ export class MoviesController {
   @Public()
   @Get()
   async getAll(
-    @Query('limit') limit?: string,
-    @Query('offset') offset?: string,
+    @Query() getAllMoviesSchema: GetAllMoviesSchema,
   ): Promise<Movie[]> {
+    const { limit, offset } = getAllMoviesSchema;
+
     return await this.moviesService.getAll({
-      limit: limit && parseInt(limit),
-      offset: offset && parseInt(offset),
+      limit,
+      offset,
     });
   }
 
   @Roles(RoleEnum.ADMIN)
   @Post()
-  async create(
-    @Body('title') title?: string,
-    @Body('opening_crawl') openingCrawl?: string,
-    @Body('release_date') releaseDate?: string,
-    @Body('directors_names') directorsNames?: string[],
-    @Body('producers_names') producersNames?: string[],
-    @Body('franchise_name') franchiseName?: string,
-  ): Promise<Movie> {
+  async create(@Body() createMovieSchema: CreateMovieSchema): Promise<Movie> {
+    const {
+      title,
+      opening_crawl: openingCrawl,
+      release_date: releaseDate,
+      directors_names: directorsNames,
+      producers_names: producersNames,
+      franchise_name: franchiseName,
+    } = createMovieSchema;
+
     return await this.moviesService.create({
       title,
       openingCrawl,
@@ -52,23 +62,27 @@ export class MoviesController {
 
   @Roles(...[RoleEnum.ADMIN, RoleEnum.REGULAR])
   @Get(':id')
-  async getOne(@Param('id') id: string): Promise<Movie> {
-    return await this.moviesService.getOne(parseInt(id));
+  async getOne(@Param() { id }: GetMovieSchema): Promise<Movie> {
+    return await this.moviesService.getOne(id);
   }
 
   @Roles(RoleEnum.ADMIN)
   @Put(':id')
   async update(
-    @Param('id') id: string,
-    @Body('title') title?: string,
-    @Body('opening_crawl') openingCrawl?: string,
-    @Body('release_date') releaseDate?: string,
-    @Body('directors_names') directorsNames?: string[],
-    @Body('producers_names') producersNames?: string[],
-    @Body('franchise_name') franchiseName?: string,
+    @Param() { id }: GetMovieSchema,
+    @Body() updateMovieSchema: UpdateMovieSchema,
   ): Promise<Movie> {
+    const {
+      title,
+      opening_crawl: openingCrawl,
+      release_date: releaseDate,
+      directors_names: directorsNames,
+      producers_names: producersNames,
+      franchise_name: franchiseName,
+    } = updateMovieSchema;
+
     return await this.moviesService.update({
-      id: parseInt(id),
+      id,
       title,
       openingCrawl,
       releaseDate: releaseDate && new Date(releaseDate),
@@ -80,8 +94,8 @@ export class MoviesController {
 
   @Roles(RoleEnum.ADMIN)
   @Delete(':id')
-  async delete(@Param('id') id: string): Promise<DeleteResponse> {
-    return await this.moviesService.delete(parseInt(id));
+  async delete(@Param() { id }: DeleteMovieSchema): Promise<DeleteResponse> {
+    return await this.moviesService.delete(id);
   }
 
   @Roles(RoleEnum.ADMIN)
