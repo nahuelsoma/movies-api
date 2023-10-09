@@ -3,6 +3,8 @@ import {
   HttpException,
   Injectable,
   InternalServerErrorException,
+  Logger,
+  NotFoundException,
 } from '@nestjs/common';
 import { MoviesRepository } from 'src/repositories/movies';
 import { CreateMovie, EditMovie, Movie } from 'src/repositories/movies/types';
@@ -19,6 +21,7 @@ export class MoviesService {
   constructor(
     private readonly starwarsRepository: StarwarsRepository,
     private readonly moviesRepository: MoviesRepository,
+    private readonly logger: Logger,
   ) {}
 
   async create({
@@ -52,9 +55,6 @@ export class MoviesService {
 
       throw new ConflictException(`Movie with id ${id} was not deleted`);
     } catch (error) {
-      // enhance error logging
-      console.log('error in MoviesService.delete: ', error.message);
-
       if (
         error instanceof PrismaClientKnownRequestError ||
         error instanceof PrismaClientValidationError
@@ -62,10 +62,11 @@ export class MoviesService {
         throw error;
       }
 
-      throw new InternalServerErrorException(
-        `Error deleting movie with id ${id}`,
-        error.message,
-      );
+      const message = `Error deleting movie with id ${id}`;
+
+      this.logger.error(message, error.stack, 'InternalServerErrorException');
+
+      throw new InternalServerErrorException(message, error.message);
     }
   }
 
@@ -77,7 +78,13 @@ export class MoviesService {
   }
 
   async getOne(id: number): Promise<Movie> {
-    return await this.moviesRepository.findOne(id);
+    const movie = await this.moviesRepository.findOne(id);
+
+    if (!movie) {
+      throw new NotFoundException(`Movie with id ${id} not found`);
+    }
+
+    return movie;
   }
 
   async seedData(): Promise<Movie[]> {
@@ -121,9 +128,6 @@ export class MoviesService {
 
       return newMovies;
     } catch (error) {
-      // enhance error logging
-      console.log('error in MoviesService.seedData: ', error.message);
-
       if (
         error instanceof PrismaClientKnownRequestError ||
         error instanceof PrismaClientValidationError ||
@@ -133,10 +137,11 @@ export class MoviesService {
         throw error;
       }
 
-      throw new InternalServerErrorException(
-        'Error seeding movies',
-        error.message,
-      );
+      const message = 'Error seeding movies';
+
+      this.logger.error(message, error.stack, 'InternalServerErrorException');
+
+      throw new InternalServerErrorException(message, error.message);
     }
   }
 
