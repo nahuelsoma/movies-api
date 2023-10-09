@@ -1,10 +1,14 @@
-import { Catch, ArgumentsHost, HttpStatus } from '@nestjs/common';
-import { BaseExceptionFilter } from '@nestjs/core';
+import {
+  Catch,
+  ArgumentsHost,
+  HttpStatus,
+  ExceptionFilter,
+} from '@nestjs/common';
 import { AxiosError } from 'axios';
 import { Response } from 'express';
 
 @Catch(AxiosError)
-export class AxiosExceptionsFilter extends BaseExceptionFilter {
+export class AxiosExceptionsFilter implements ExceptionFilter {
   catch(exception: AxiosError, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const expressResponse = ctx.getResponse<Response>();

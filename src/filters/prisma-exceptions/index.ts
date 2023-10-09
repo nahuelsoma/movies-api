@@ -1,5 +1,9 @@
-import { Catch, ArgumentsHost, HttpStatus } from '@nestjs/common';
-import { BaseExceptionFilter } from '@nestjs/core';
+import {
+  Catch,
+  ArgumentsHost,
+  HttpStatus,
+  ExceptionFilter,
+} from '@nestjs/common';
 import {
   PrismaClientKnownRequestError,
   PrismaClientValidationError,
@@ -7,7 +11,7 @@ import {
 import { Response } from 'express';
 
 @Catch(PrismaClientKnownRequestError)
-export class PrismaKnownExceptionsFilter extends BaseExceptionFilter {
+export class PrismaKnownExceptionsFilter implements ExceptionFilter {
   catch(exception: PrismaClientKnownRequestError, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
@@ -38,7 +42,7 @@ export class PrismaKnownExceptionsFilter extends BaseExceptionFilter {
 }
 
 @Catch(PrismaClientValidationError)
-export class PrismaValidationExceptionsFilter extends BaseExceptionFilter {
+export class PrismaValidationExceptionsFilter implements ExceptionFilter {
   catch(exception: PrismaClientValidationError, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
