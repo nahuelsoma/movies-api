@@ -10,7 +10,7 @@ import {
   WinstonModule,
 } from 'nest-winston';
 import * as winston from 'winston';
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(CoreModule, {
@@ -25,6 +25,14 @@ async function bootstrap() {
       ],
     }),
   });
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: { enableImplicitConversion: true },
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  );
   app.useGlobalFilters(
     new PrismaKnownExceptionsFilter(app.get(Logger)),
     new PrismaValidationExceptionsFilter(app.get(Logger)),
