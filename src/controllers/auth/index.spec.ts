@@ -3,7 +3,7 @@ import { AuthController } from '.';
 import { Test } from '@nestjs/testing';
 import { InternalServerErrorException } from '@nestjs/common';
 import { AuthService } from 'src/services/auth';
-import { RoleEnum } from 'src/repositories/users/types';
+import { RoleEnum, User } from 'src/repositories/users/types';
 
 const moduleMocker = new ModuleMocker(global);
 
@@ -40,7 +40,10 @@ describe('AuthController', () => {
       };
       const controller = await mockDependencies({ mockAuthService });
 
-      const result = await controller.login('test@test.com', 'test password');
+      const result = await controller.login({
+        email: 'test@test.com',
+        password: 'test password',
+      });
 
       expect(result).toEqual(mockAuthToken);
     });
@@ -51,34 +54,20 @@ describe('AuthController', () => {
       };
       const controller = await mockDependencies({ mockAuthService });
 
-      await controller.login('test@test.com', 'test password');
+      await controller.login({
+        email: 'test@test.com',
+        password: 'test password',
+      });
 
       expect(mockAuthService.login).toHaveBeenCalledWith({
         email: 'test@test.com',
         password: 'test password',
       });
     });
-
-    describe("When the service's login method fails", () => {
-      it('Should throw an InternalServerErrorException', async () => {
-        const mockAuthService = {
-          login: jest.fn().mockRejectedValue(new Error('test error')),
-        };
-        const controller = await mockDependencies({ mockAuthService });
-
-        try {
-          await controller.login('test@test.com', 'test password');
-        } catch (error) {
-          expect(error.message).toEqual('Error logging in');
-          expect(error.status).toEqual(500);
-          expect(error).toBeInstanceOf(InternalServerErrorException);
-        }
-      });
-    });
   });
 
   describe('signUp method', () => {
-    const mockUser = {
+    const mockUser: User = {
       id: 1,
       name: 'test user',
       email: 'test@test.com',
@@ -94,12 +83,12 @@ describe('AuthController', () => {
       };
       const controller = await mockDependencies({ mockAuthService });
 
-      const result = await controller.signUp(
-        'test user',
-        'test@test.com',
-        'test password',
-        RoleEnum.REGULAR,
-      );
+      const result = await controller.signUp({
+        name: 'test user',
+        email: 'test@test.com',
+        password: 'test password',
+        role: RoleEnum.REGULAR,
+      });
 
       expect(result).toEqual(mockUser);
     });
@@ -110,40 +99,18 @@ describe('AuthController', () => {
       };
       const controller = await mockDependencies({ mockAuthService });
 
-      await controller.signUp(
-        'test user',
-        'test@test.com',
-        'test password',
-        RoleEnum.REGULAR,
-      );
+      await controller.signUp({
+        name: 'test user',
+        email: 'test@test.com',
+        password: 'test password',
+        role: RoleEnum.REGULAR,
+      });
 
       expect(mockAuthService.signUp).toHaveBeenCalledWith({
         name: 'test user',
         email: 'test@test.com',
         password: 'test password',
         role: RoleEnum.REGULAR,
-      });
-    });
-
-    describe("When the service's signUp method fails", () => {
-      it('Should throw an InternalServerErrorException', async () => {
-        const mockAuthService = {
-          signUp: jest.fn().mockRejectedValue(new Error('test error')),
-        };
-        const controller = await mockDependencies({ mockAuthService });
-
-        try {
-          await controller.signUp(
-            'test user',
-            'test@test.com',
-            'test password',
-            RoleEnum.REGULAR,
-          );
-        } catch (error) {
-          expect(error.message).toEqual('Error signing up');
-          expect(error.status).toEqual(500);
-          expect(error).toBeInstanceOf(InternalServerErrorException);
-        }
       });
     });
   });

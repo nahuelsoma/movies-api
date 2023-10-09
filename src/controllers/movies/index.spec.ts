@@ -2,7 +2,7 @@ import { ModuleMocker, MockFunctionMetadata } from 'jest-mock';
 import { MoviesController } from '.';
 import { Test } from '@nestjs/testing';
 import { MoviesService } from 'src/services/movies';
-import { InternalServerErrorException } from '@nestjs/common';
+import { Movie } from 'src/repositories/movies/types';
 
 const moduleMocker = new ModuleMocker(global);
 
@@ -28,7 +28,7 @@ describe('MoviesController', () => {
     return moduleRef.get(MoviesController);
   };
 
-  const getMockMovie = (id: number) => ({
+  const getMockMovie = (id: number): Movie => ({
     id,
     title: `test movie ${id}`,
     opening_crawl: `test opening crawl ${id}`,
@@ -45,12 +45,10 @@ describe('MoviesController', () => {
         name: 'test producer',
       },
     ],
-    franchise: [
-      {
-        id: 1,
-        name: 'test franchise',
-      },
-    ],
+    franchise: {
+      id: 1,
+      name: 'test franchise',
+    },
   });
 
   describe('getAll method', () => {
@@ -61,7 +59,10 @@ describe('MoviesController', () => {
       };
       const controller = await mockDependencies({ mockMoviesService });
 
-      const result = await controller.getAll();
+      const result = await controller.getAll({
+        limit: 10,
+        offset: 0,
+      });
 
       expect(result).toEqual(expectedResult);
     });
@@ -72,28 +73,14 @@ describe('MoviesController', () => {
       };
       const controller = await mockDependencies({ mockMoviesService });
 
-      await controller.getAll('1', '2');
+      await controller.getAll({
+        limit: 10,
+        offset: 0,
+      });
 
       expect(mockMoviesService.getAll).toHaveBeenCalledWith({
-        limit: 1,
-        offset: 2,
-      });
-    });
-
-    describe("When the service's getAll method fails", () => {
-      it('Should throw an InternalServerErrorException', async () => {
-        const mockMoviesService = {
-          getAll: jest.fn().mockRejectedValue(new Error('test error')),
-        };
-        const controller = await mockDependencies({ mockMoviesService });
-
-        try {
-          await controller.getAll();
-        } catch (error) {
-          expect(error.message).toEqual('Error getting movies');
-          expect(error.status).toEqual(500);
-          expect(error).toBeInstanceOf(InternalServerErrorException);
-        }
+        limit: 10,
+        offset: 0,
       });
     });
   });
@@ -106,14 +93,14 @@ describe('MoviesController', () => {
       };
       const controller = await mockDependencies({ mockMoviesService });
 
-      const result = await controller.create(
-        'test movie 1',
-        'test opening crawl 1',
-        '2020-01-01',
-        ['test director'],
-        ['test producer'],
-        'test franchise',
-      );
+      const result = await controller.create({
+        title: 'test movie 1',
+        opening_crawl: 'test opening crawl 1',
+        release_date: '2020-01-01',
+        directors_names: ['test director'],
+        producers_names: ['test producer'],
+        franchise_name: 'test franchise',
+      });
 
       expect(result).toEqual(expectedResult);
     });
@@ -124,14 +111,14 @@ describe('MoviesController', () => {
       };
       const controller = await mockDependencies({ mockMoviesService });
 
-      await controller.create(
-        'test movie 1',
-        'test opening crawl 1',
-        '2020-01-01',
-        ['test director'],
-        ['test producer'],
-        'test franchise',
-      );
+      await controller.create({
+        title: 'test movie 1',
+        opening_crawl: 'test opening crawl 1',
+        release_date: '2020-01-01',
+        directors_names: ['test director'],
+        producers_names: ['test producer'],
+        franchise_name: 'test franchise',
+      });
 
       expect(mockMoviesService.create).toHaveBeenCalledWith({
         title: 'test movie 1',
@@ -140,30 +127,6 @@ describe('MoviesController', () => {
         directorsNames: ['test director'],
         producersNames: ['test producer'],
         franchiseName: 'test franchise',
-      });
-    });
-
-    describe("When the service's create method fails", () => {
-      it('Should throw an InternalServerErrorException', async () => {
-        const mockMoviesService = {
-          create: jest.fn().mockRejectedValue(new Error('test error')),
-        };
-        const controller = await mockDependencies({ mockMoviesService });
-
-        try {
-          await controller.create(
-            'test movie 1',
-            'test opening crawl 1',
-            '2020-01-01',
-            ['test director'],
-            ['test producer'],
-            'test franchise',
-          );
-        } catch (error) {
-          expect(error.message).toEqual('Error creating movie');
-          expect(error.status).toEqual(500);
-          expect(error).toBeInstanceOf(InternalServerErrorException);
-        }
       });
     });
   });
@@ -176,7 +139,7 @@ describe('MoviesController', () => {
       };
       const controller = await mockDependencies({ mockMoviesService });
 
-      const result = await controller.getOne('1');
+      const result = await controller.getOne({ id: 1 });
 
       expect(result).toEqual(expectedResult);
     });
@@ -187,26 +150,9 @@ describe('MoviesController', () => {
       };
       const controller = await mockDependencies({ mockMoviesService });
 
-      await controller.getOne('1');
+      await controller.getOne({ id: 1 });
 
       expect(mockMoviesService.getOne).toHaveBeenCalledWith(1);
-    });
-
-    describe("When the service's getOne method fails", () => {
-      it('Should throw an InternalServerErrorException', async () => {
-        const mockMoviesService = {
-          getOne: jest.fn().mockRejectedValue(new Error('test error')),
-        };
-        const controller = await mockDependencies({ mockMoviesService });
-
-        try {
-          await controller.getOne('1');
-        } catch (error) {
-          expect(error.message).toEqual('Error getting movie');
-          expect(error.status).toEqual(500);
-          expect(error).toBeInstanceOf(InternalServerErrorException);
-        }
-      });
     });
   });
 
@@ -219,13 +165,17 @@ describe('MoviesController', () => {
       const controller = await mockDependencies({ mockMoviesService });
 
       const result = await controller.update(
-        '1',
-        'test movie 1',
-        'test opening crawl 1',
-        '2020-01-01',
-        ['test director'],
-        ['test producer'],
-        'test franchise',
+        {
+          id: 1,
+        },
+        {
+          title: 'test movie 1',
+          opening_crawl: 'test opening crawl 1',
+          release_date: '2020-01-01',
+          directors_names: ['test director'],
+          producers_names: ['test producer'],
+          franchise_name: 'test franchise',
+        },
       );
 
       expect(result).toEqual(expectedResult);
@@ -238,13 +188,17 @@ describe('MoviesController', () => {
       const controller = await mockDependencies({ mockMoviesService });
 
       await controller.update(
-        '1',
-        'test movie 1',
-        'test opening crawl 1',
-        '2020-01-01',
-        ['test director'],
-        ['test producer'],
-        'test franchise',
+        {
+          id: 1,
+        },
+        {
+          title: 'test movie 1',
+          opening_crawl: 'test opening crawl 1',
+          release_date: '2020-01-01',
+          directors_names: ['test director'],
+          producers_names: ['test producer'],
+          franchise_name: 'test franchise',
+        },
       );
 
       expect(mockMoviesService.update).toHaveBeenCalledWith({
@@ -255,31 +209,6 @@ describe('MoviesController', () => {
         directorsNames: ['test director'],
         producersNames: ['test producer'],
         franchiseName: 'test franchise',
-      });
-    });
-
-    describe("When the service's update method fails", () => {
-      it('Should throw an InternalServerErrorException', async () => {
-        const mockMoviesService = {
-          update: jest.fn().mockRejectedValue(new Error('test error')),
-        };
-        const controller = await mockDependencies({ mockMoviesService });
-
-        try {
-          await controller.update(
-            '1',
-            'test movie 1',
-            'test opening crawl 1',
-            '2020-01-01',
-            ['test director'],
-            ['test producer'],
-            'test franchise',
-          );
-        } catch (error) {
-          expect(error.message).toEqual('Error updating movie');
-          expect(error.status).toEqual(500);
-          expect(error).toBeInstanceOf(InternalServerErrorException);
-        }
       });
     });
   });
@@ -295,7 +224,7 @@ describe('MoviesController', () => {
       };
       const controller = await mockDependencies({ mockMoviesService });
 
-      const result = await controller.delete('1');
+      const result = await controller.delete({ id: 1 });
 
       expect(result).toEqual(expectedResult);
     });
@@ -306,26 +235,9 @@ describe('MoviesController', () => {
       };
       const controller = await mockDependencies({ mockMoviesService });
 
-      await controller.delete('1');
+      await controller.delete({ id: 1 });
 
       expect(mockMoviesService.delete).toHaveBeenCalledWith(1);
-    });
-
-    describe("When the service's delete method fails", () => {
-      it('Should throw an InternalServerErrorException', async () => {
-        const mockMoviesService = {
-          delete: jest.fn().mockRejectedValue(new Error('test error')),
-        };
-        const controller = await mockDependencies({ mockMoviesService });
-
-        try {
-          await controller.delete('1');
-        } catch (error) {
-          expect(error.message).toEqual('Error deleting movie');
-          expect(error.status).toEqual(500);
-          expect(error).toBeInstanceOf(InternalServerErrorException);
-        }
-      });
     });
   });
 
@@ -351,23 +263,6 @@ describe('MoviesController', () => {
       await controller.seedData();
 
       expect(mockMoviesService.seedData).toHaveBeenCalled();
-    });
-
-    describe("When the service's seedData method fails", () => {
-      it('Should throw an InternalServerErrorException', async () => {
-        const mockMoviesService = {
-          seedData: jest.fn().mockRejectedValue(new Error('test error')),
-        };
-        const controller = await mockDependencies({ mockMoviesService });
-
-        try {
-          await controller.seedData();
-        } catch (error) {
-          expect(error.message).toEqual('Error seeding data');
-          expect(error.status).toEqual(500);
-          expect(error).toBeInstanceOf(InternalServerErrorException);
-        }
-      });
     });
   });
 });

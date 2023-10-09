@@ -7,7 +7,6 @@ import {
   Put,
   Param,
   Delete,
-  InternalServerErrorException,
 } from '@nestjs/common';
 import { Public, Roles } from 'src/decorators';
 import {
