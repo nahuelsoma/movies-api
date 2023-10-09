@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { AuthModule } from '../auth';
 import { MoviesModule } from '../movies';
 import { APP_FILTER } from '@nestjs/core';
@@ -22,6 +22,7 @@ import { AxiosExceptionsFilter } from 'src/filters/axios-exceptions';
       provide: APP_FILTER,
       useClass: AxiosExceptionsFilter,
     },
+    Logger,
   ],
   imports: [MoviesModule, AuthModule],
 })
