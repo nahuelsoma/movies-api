@@ -1,7 +1,8 @@
-import axios from 'axios';
+import { InternalServerErrorException } from '@nestjs/common';
+import axios, { AxiosError } from 'axios';
 
 export class StarwarsRepository {
-  async seedData(): Promise<StarwarsMovies> {
+  async getSeedData(): Promise<StarwarsMovies> {
     try {
       const { data } = await axios<StarwarsMovies>({
         method: 'get',
@@ -10,10 +11,17 @@ export class StarwarsRepository {
 
       return data;
     } catch (error) {
-      // enhace this error handling
+      // enhance error logging
       console.log('error in StarwarsRepository.seedData: ', error.message);
 
-      return { count: 0, results: [] };
+      if (error instanceof AxiosError) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException(
+        'Error getting movies from starwars api',
+        error.message,
+      );
     }
   }
 }

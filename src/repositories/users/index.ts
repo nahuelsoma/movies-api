@@ -1,19 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Database } from '../../infrastructure/database';
-import { CreateUser, FindAllUsers, FindOneUser, RoleEnum, User } from './types';
+import { CreateUser, FindOneUser, User } from './types';
+import {
+  PrismaClientKnownRequestError,
+  PrismaClientValidationError,
+} from '@prisma/client/runtime/library';
 
 @Injectable()
 export class UsersRepository {
   constructor(private database: Database) {}
 
-  async create({
-    name,
-    email,
-    password,
-    role = RoleEnum.REGULAR,
-  }: CreateUser): Promise<User> {
+  async create({ name, email, password, role }: CreateUser): Promise<User> {
     try {
-      return this.database.user.create({
+      const newUser = await this.database.user.create({
         data: {
           name,
           email,
@@ -39,61 +38,35 @@ export class UsersRepository {
             },
           },
         },
-      }) as Promise<User>;
+      });
+
+      return newUser as User;
     } catch (error) {
-      // enhace this error handling
-      console.log('error in UsersRepository.create: ', error.message);
+      // enhance error logging
+      console.log('error in UsersRepository.create: ', error);
 
-      return null;
-    }
-  }
+      if (
+        error instanceof PrismaClientKnownRequestError ||
+        error instanceof PrismaClientValidationError
+      ) {
+        throw error;
+      }
 
-  async findAll({
-    skip = 0,
-    take = 10,
-    favorites = false,
-  }: FindAllUsers): Promise<User[]> {
-    try {
-      return this.database.user.findMany({
-        skip,
-        take,
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          role: {
-            select: {
-              name: true,
-            },
-          },
-          favorites: favorites && {
-            select: {
-              title: true,
-              opening_crawl: true,
-            },
-          },
-        },
-      }) as Promise<User[]>;
-    } catch (error) {
-      // enhace this error handling
-      console.log('error in UsersRepository.findAll: ', error.message);
-
-      return [];
+      throw new InternalServerErrorException(
+        'Error creating user. Please try again later.',
+        error.message,
+      );
     }
   }
 
   async findOne({
     id,
     email,
-    favorites = false,
-    isLogin = false,
+    favorites,
+    isLogin,
   }: FindOneUser): Promise<User | null> {
-    if (!id && !email) {
-      return null;
-    }
-
     try {
-      return this.database.user.findUnique({
+      const user = await this.database.user.findUnique({
         where: {
           id: id,
           email: email,
@@ -115,12 +88,24 @@ export class UsersRepository {
             },
           },
         },
-      }) as Promise<User>;
+      });
+
+      return user as User;
     } catch (error) {
-      // enhace this error handling
+      // enhance error logging
       console.log('error in UsersRepository.findOne: ', error.message);
 
-      return null;
+      if (
+        error instanceof PrismaClientKnownRequestError ||
+        error instanceof PrismaClientValidationError
+      ) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException(
+        'Error getting user. Please try again later.',
+        error.message,
+      );
     }
   }
 }
