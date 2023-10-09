@@ -38,15 +38,24 @@ export class PrismaKnownExceptionsFilter implements ExceptionFilter {
               } ${hasManyTargets ? 'are' : 'is'} already taken`
             : 'Unique field is already taken';
         case 'P2025':
-          const referenceString =
+          const p2025ReferenceString =
             'An operation failed because it depends on one or more records that were required but not found. ';
 
-          const prismaMessage = message.substring(
-            message.indexOf(referenceString),
+          const p2025PrismaMessage = message.substring(
+            message.indexOf(p2025ReferenceString),
             message.length,
           );
 
-          return prismaMessage.replace(referenceString, '');
+          return p2025PrismaMessage.replace(p2025ReferenceString, '');
+        case 'P2016':
+          const p2016ReferenceString = 'Query interpretation error. ';
+
+          const p2016PrismaMessage = message.substring(
+            message.indexOf(p2016ReferenceString),
+            message.length,
+          );
+
+          return p2016PrismaMessage.replace(p2016ReferenceString, '');
         default:
           return 'Request error';
       }

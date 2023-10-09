@@ -1,13 +1,13 @@
 import {
-  IsNotEmpty,
-  MinLength,
-  MaxLength,
-  IsInt,
-  IsArray,
-  IsOptional,
-  Min,
-  IsDate,
   ArrayMinSize,
+  IsArray,
+  IsDateString,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  MaxLength,
+  Min,
+  MinLength,
 } from 'class-validator';
 
 export class GetAllMoviesSchema {
@@ -31,9 +31,9 @@ export class CreateMovieSchema {
   @IsNotEmpty()
   opening_crawl: string;
 
-  @IsDate()
+  @IsDateString()
   @IsNotEmpty()
-  release_date: Date;
+  release_date: string;
 
   @IsArray()
   @ArrayMinSize(1)
@@ -72,8 +72,8 @@ export class UpdateMovieSchema {
   opening_crawl?: string;
 
   @IsOptional()
-  @IsDate()
-  release_date?: Date;
+  @IsDateString()
+  release_date?: string;
 
   @IsOptional()
   @IsArray()
