@@ -8,7 +8,7 @@ export class StarwarsRepository {
     try {
       const { data } = await axios<StarwarsMovies>({
         method: 'get',
-        url: 'https://swapi.dev/api/filmsa',
+        url: 'https://swapi.dev/api/films',
       });
 
       return data;
