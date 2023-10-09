@@ -1,6 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Database } from '../../infrastructure/database';
 import { CreateMovie, EditMovie, FindAll, Movie } from './types';
+import {
+  PrismaClientKnownRequestError,
+  PrismaClientValidationError,
+} from '@prisma/client/runtime/library';
 
 @Injectable()
 export class MoviesRepository {
@@ -15,7 +19,7 @@ export class MoviesRepository {
     franchiseName,
   }: CreateMovie): Promise<Movie> {
     try {
-      return this.database.movie.create({
+      return await this.database.movie.create({
         data: {
           title,
           opening_crawl: openingCrawl,
@@ -65,16 +69,26 @@ export class MoviesRepository {
         },
       });
     } catch (error) {
-      // enhace this error handling
-      console.log('error in MoviesRepository.create: ', error.message);
+      // enhance error logging
+      console.log('error in MoviesRepository.create: ', error);
 
-      return null;
+      if (
+        error instanceof PrismaClientKnownRequestError ||
+        error instanceof PrismaClientValidationError
+      ) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException(
+        'Error creating movie. Please try again later.',
+        error.message,
+      );
     }
   }
 
   async delete(id: number): Promise<Movie> {
     try {
-      return this.database.movie.delete({
+      return await this.database.movie.delete({
         where: { id },
         select: {
           id: true,
@@ -102,16 +116,26 @@ export class MoviesRepository {
         },
       });
     } catch (error) {
-      // enhace this error handling
+      // enhace error logging
       console.log('error in MoviesRepository.delete: ', error.message);
 
-      return null;
+      if (
+        error instanceof PrismaClientKnownRequestError ||
+        error instanceof PrismaClientValidationError
+      ) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException(
+        `Error deleting movie with id ${id}`,
+        error.message,
+      );
     }
   }
 
   async findAll({ skip = 0, take = 10 }: FindAll): Promise<Movie[]> {
     try {
-      return this.database.movie.findMany({
+      return await this.database.movie.findMany({
         skip,
         take,
         select: {
@@ -140,16 +164,26 @@ export class MoviesRepository {
         },
       });
     } catch (error) {
-      // enhace this error handling
+      // enhace error logging
       console.log('error in MoviesRepository.findAll: ', error.message);
 
-      return [];
+      if (
+        error instanceof PrismaClientKnownRequestError ||
+        error instanceof PrismaClientValidationError
+      ) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException(
+        'Error getting all movies',
+        error.message,
+      );
     }
   }
 
   async findOne(id: number): Promise<Movie> {
     try {
-      return this.database.movie.findUnique({
+      return await this.database.movie.findUnique({
         where: { id },
         select: {
           id: true,
@@ -177,10 +211,20 @@ export class MoviesRepository {
         },
       });
     } catch (error) {
-      // enhace this error handling
+      // enhace error logging
       console.log('error in MoviesRepository.findUnique: ', error.message);
 
-      return null;
+      if (
+        error instanceof PrismaClientKnownRequestError ||
+        error instanceof PrismaClientValidationError
+      ) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException(
+        `Error getting movie with id ${id}`,
+        error.message,
+      );
     }
   }
 
@@ -194,7 +238,7 @@ export class MoviesRepository {
     franchiseName,
   }: EditMovie): Promise<Movie> {
     try {
-      return this.database.movie.update({
+      return await this.database.movie.update({
         where: { id },
         data: {
           title,
@@ -255,10 +299,20 @@ export class MoviesRepository {
         },
       });
     } catch (error) {
-      // enhace this error handling
+      // enhace error logging
       console.log('error in MoviesRepository.update: ', error.message);
 
-      return null;
+      if (
+        error instanceof PrismaClientKnownRequestError ||
+        error instanceof PrismaClientValidationError
+      ) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException(
+        `Error updating movie with id ${id}`,
+        error.message,
+      );
     }
   }
 }
