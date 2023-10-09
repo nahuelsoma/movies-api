@@ -1,15 +1,5 @@
-import {
-  Body,
-  Controller,
-  HttpCode,
-  HttpException,
-  HttpStatus,
-  InternalServerErrorException,
-  Post,
-} from '@nestjs/common';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { Public, Roles } from 'src/decorators';
-import { RoleEnum } from 'src/repositories/users/types';
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { Public } from 'src/decorators';
 import { AuthService } from 'src/services/auth';
 
 @Controller('auth')

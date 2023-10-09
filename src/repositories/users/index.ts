@@ -1,11 +1,6 @@
-import {
-  BadRequestException,
-  HttpException,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Database } from '../../infrastructure/database';
-import { CreateUser, FindAllUsers, FindOneUser, RoleEnum, User } from './types';
+import { CreateUser, FindOneUser, User } from './types';
 import {
   PrismaClientKnownRequestError,
   PrismaClientValidationError,

@@ -7,14 +7,7 @@ import {
   Put,
   Param,
   Delete,
-  InternalServerErrorException,
-  HttpException,
 } from '@nestjs/common';
-import {
-  PrismaClientKnownRequestError,
-  PrismaClientValidationError,
-} from '@prisma/client/runtime/library';
-import { AxiosError } from 'axios';
 import { Public, Roles } from 'src/decorators';
 import { Movie } from 'src/repositories/movies/types';
 import { RoleEnum } from 'src/repositories/users/types';
