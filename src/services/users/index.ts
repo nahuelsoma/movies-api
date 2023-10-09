@@ -1,4 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
+import {
+  PrismaClientKnownRequestError,
+  PrismaClientValidationError,
+} from '@prisma/client/runtime/library';
 import { UsersRepository } from 'src/repositories/users';
 import {
   CreateUser,
@@ -17,39 +26,46 @@ export class UsersService {
     password,
     role = RoleEnum.REGULAR,
   }: CreateUser): Promise<User> {
-    try {
-      return this.usersRepository.create({
-        name,
-        email,
-        password,
-        role,
-      });
-    } catch (error) {
-      // enhace this error handling
-      console.log('error in UsersService.create: ', error.message);
-
-      return null;
-    }
+    return await this.usersRepository.create({
+      name,
+      email,
+      password,
+      role,
+    });
   }
 
   async getOne({
     id,
     email,
-    isLogin,
-    favorites,
+    isLogin = false,
+    favorites = false,
   }: FindOneUser): Promise<User | null> {
     try {
-      return this.usersRepository.findOne({
+      if (!id && !email) {
+        throw new BadRequestException('id or email must be provided');
+      }
+
+      return await this.usersRepository.findOne({
         id,
         email,
         isLogin,
         favorites,
       });
     } catch (error) {
-      // enhace this error handling
+      // enhance error logging
       console.log('error in UsersService.getOne: ', error.message);
 
-      return null;
+      if (
+        error instanceof PrismaClientKnownRequestError ||
+        error instanceof PrismaClientValidationError ||
+        error instanceof HttpException
+      ) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException(
+        'Error getting user. Please try again later.',
+      );
     }
   }
 }
