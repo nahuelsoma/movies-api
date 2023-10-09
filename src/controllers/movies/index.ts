@@ -10,6 +10,13 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { Public, Roles } from 'src/decorators';
+import {
+  GetAllMoviesSchema,
+  CreateMovieSchema,
+  DeleteMovieSchema,
+  GetMovieSchema,
+  UpdateMovieSchema,
+} from 'src/schemas/movies';
 import { Movie } from 'src/repositories/movies/types';
 import { RoleEnum } from 'src/repositories/users/types';
 import { MoviesService } from 'src/services/movies';
@@ -22,114 +29,79 @@ export class MoviesController {
   @Public()
   @Get()
   async getAll(
-    @Query('limit') limit?: string,
-    @Query('offset') offset?: string,
+    @Query() getAllMoviesSchema: GetAllMoviesSchema,
   ): Promise<Movie[]> {
-    try {
-      return await this.moviesService.getAll({
-        limit: limit && parseInt(limit),
-        offset: offset && parseInt(offset),
-      });
-    } catch (error) {
-      // enhace this error handling
-      console.log('error in MoviesController.getAll: ', error.message);
+    const { limit, offset } = getAllMoviesSchema;
 
-      throw new InternalServerErrorException('Error getting movies');
-    }
+    return await this.moviesService.getAll({
+      limit,
+      offset,
+    });
   }
 
   @Roles(RoleEnum.ADMIN)
   @Post()
-  async create(
-    @Body('title') title: string,
-    @Body('opening_crawl') openingCrawl: string,
-    @Body('release_date') releaseDate: string,
-    @Body('directors_names') directorsNames: string[],
-    @Body('producers_names') producersNames: string[],
-    @Body('franchise_name') franchiseName?: string,
-  ): Promise<Movie> {
-    try {
-      return await this.moviesService.create({
-        title,
-        openingCrawl,
-        releaseDate: new Date(releaseDate),
-        directorsNames,
-        producersNames,
-        franchiseName,
-      });
-    } catch (error) {
-      // enhace this error handling
-      console.log('error in MoviesController.create: ', error.message);
+  async create(@Body() createMovieSchema: CreateMovieSchema): Promise<Movie> {
+    const {
+      title,
+      opening_crawl: openingCrawl,
+      release_date: releaseDate,
+      directors_names: directorsNames,
+      producers_names: producersNames,
+      franchise_name: franchiseName,
+    } = createMovieSchema;
 
-      throw new InternalServerErrorException('Error creating movie');
-    }
+    return await this.moviesService.create({
+      title,
+      openingCrawl,
+      releaseDate: new Date(releaseDate),
+      directorsNames,
+      producersNames,
+      franchiseName,
+    });
   }
 
   @Roles(...[RoleEnum.ADMIN, RoleEnum.REGULAR])
   @Get(':id')
-  async getOne(@Param('id') id: string): Promise<Movie> {
-    try {
-      return await this.moviesService.getOne(parseInt(id));
-    } catch (error) {
-      // enhace this error handling
-      console.log('error in MoviesController.getOne: ', error.message);
-
-      throw new InternalServerErrorException('Error getting movie');
-    }
+  async getOne(@Param() { id }: GetMovieSchema): Promise<Movie> {
+    return await this.moviesService.getOne(id);
   }
 
   @Roles(RoleEnum.ADMIN)
   @Put(':id')
   async update(
-    @Param('id') id: string,
-    @Body('title') title?: string,
-    @Body('opening_crawl') openingCrawl?: string,
-    @Body('release_date') releaseDate?: string,
-    @Body('directors_names') directorsNames?: string[],
-    @Body('producers_names') producersNames?: string[],
-    @Body('franchise_name') franchiseName?: string,
+    @Param() { id }: GetMovieSchema,
+    @Body() updateMovieSchema: UpdateMovieSchema,
   ): Promise<Movie> {
-    try {
-      return await this.moviesService.update({
-        id: parseInt(id),
-        title,
-        openingCrawl,
-        releaseDate: releaseDate && new Date(releaseDate),
-        directorsNames,
-        producersNames,
-        franchiseName,
-      });
-    } catch (error) {
-      // enhace this error handling
-      console.log('error in MoviesController.update: ', error.message);
+    const {
+      title,
+      opening_crawl: openingCrawl,
+      release_date: releaseDate,
+      directors_names: directorsNames,
+      producers_names: producersNames,
+      franchise_name: franchiseName,
+    } = updateMovieSchema;
 
-      throw new InternalServerErrorException('Error updating movie');
-    }
+    return await this.moviesService.update({
+      id,
+      title,
+      openingCrawl,
+      releaseDate: releaseDate && new Date(releaseDate),
+      directorsNames,
+      producersNames,
+      franchiseName,
+    });
   }
 
   @Roles(RoleEnum.ADMIN)
   @Delete(':id')
-  async delete(@Param('id') id: string): Promise<DeleteResponse> {
-    try {
-      return await this.moviesService.delete(parseInt(id));
-    } catch (error) {
-      // enhace this error handling
-      console.log('error in MoviesController.delete: ', error.message);
-
-      throw new InternalServerErrorException('Error deleting movie');
-    }
+  async delete(@Param() { id }: DeleteMovieSchema): Promise<DeleteResponse> {
+    return await this.moviesService.delete(id);
   }
 
   @Roles(RoleEnum.ADMIN)
   @Post('/seed')
   async seedData(): Promise<Movie[]> {
-    try {
-      return await this.moviesService.seedData();
-    } catch (error) {
-      // enhace this error handling
-      console.log('error in MoviesController.seedData: ', error.message);
-
-      throw new InternalServerErrorException('Error seeding data');
-    }
+    return await this.moviesService.seedData();
   }
 }

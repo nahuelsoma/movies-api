@@ -1,14 +1,27 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  HttpException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { MoviesRepository } from 'src/repositories/movies';
 import { CreateMovie, EditMovie, Movie } from 'src/repositories/movies/types';
 import { StarwarsRepository } from 'src/repositories/starwars';
 import { DeleteResponse, GetAll } from './types';
+import {
+  PrismaClientKnownRequestError,
+  PrismaClientValidationError,
+} from '@prisma/client/runtime/library';
+import { AxiosError } from 'axios';
 
 @Injectable()
 export class MoviesService {
   constructor(
     private readonly starwarsRepository: StarwarsRepository,
     private readonly moviesRepository: MoviesRepository,
+    private readonly logger: Logger,
   ) {}
 
   async create({
@@ -19,21 +32,14 @@ export class MoviesService {
     producersNames,
     franchiseName,
   }: CreateMovie): Promise<Movie> {
-    try {
-      return await this.moviesRepository.create({
-        title,
-        openingCrawl,
-        releaseDate,
-        directorsNames,
-        producersNames,
-        franchiseName,
-      });
-    } catch (error) {
-      // enhace this error handling
-      console.log('error in MoviesService.create: ', error.message);
-
-      return null;
-    }
+    return await this.moviesRepository.create({
+      title,
+      openingCrawl,
+      releaseDate,
+      directorsNames,
+      producersNames,
+      franchiseName,
+    });
   }
 
   async delete(id: number): Promise<DeleteResponse> {
@@ -46,42 +52,44 @@ export class MoviesService {
           status: 'success',
         };
       }
-    } catch (error) {
-      // enhace this error handling
-      console.log('error in MoviesService.delete: ', error.message);
 
-      return null;
+      throw new ConflictException(`Movie with id ${id} was not deleted`);
+    } catch (error) {
+      if (
+        error instanceof PrismaClientKnownRequestError ||
+        error instanceof PrismaClientValidationError
+      ) {
+        throw error;
+      }
+
+      const message = `Error deleting movie with id ${id}`;
+
+      this.logger.error(message, error.stack, 'InternalServerErrorException');
+
+      throw new InternalServerErrorException(message, error.message);
     }
   }
 
   async getAll({ limit, offset }: GetAll): Promise<Movie[]> {
-    try {
-      return await this.moviesRepository.findAll({
-        skip: offset,
-        take: limit,
-      });
-    } catch (error) {
-      // enhace this error handling
-      console.log('error in MoviesService.getAll: ', error.message);
-
-      return [];
-    }
+    return await this.moviesRepository.findAll({
+      skip: offset,
+      take: limit,
+    });
   }
 
   async getOne(id: number): Promise<Movie> {
-    try {
-      return await this.moviesRepository.findOne(id);
-    } catch (error) {
-      // enhace this error handling
-      console.log('error in MoviesService.getOne: ', error.message);
+    const movie = await this.moviesRepository.findOne(id);
 
-      return null;
+    if (!movie) {
+      throw new NotFoundException(`Movie with id ${id} not found`);
     }
+
+    return movie;
   }
 
   async seedData(): Promise<Movie[]> {
     try {
-      const starwarsMovies = await this.starwarsRepository.seedData();
+      const starwarsMovies = await this.starwarsRepository.getSeedData();
 
       const newMoviesPromises = starwarsMovies.results.map((movie) => {
         const { title, opening_crawl, release_date, director, producer } =
@@ -106,8 +114,10 @@ export class MoviesService {
           }
         });
 
-        // enhace this error handling
-        throw new Error(rejected.join(', '));
+        throw new InternalServerErrorException(
+          'Error seeding movies',
+          rejected.join(', '),
+        );
       }
 
       const newMovies = newMoviesResults.map((newMovie) => {
@@ -118,10 +128,20 @@ export class MoviesService {
 
       return newMovies;
     } catch (error) {
-      // enhace this error handling
-      console.log('error in MoviesService.seedData: ', error.message);
+      if (
+        error instanceof PrismaClientKnownRequestError ||
+        error instanceof PrismaClientValidationError ||
+        error instanceof AxiosError ||
+        error instanceof HttpException
+      ) {
+        throw error;
+      }
 
-      return [];
+      const message = 'Error seeding movies';
+
+      this.logger.error(message, error.stack, 'InternalServerErrorException');
+
+      throw new InternalServerErrorException(message, error.message);
     }
   }
 
@@ -134,21 +154,14 @@ export class MoviesService {
     producersNames,
     franchiseName,
   }: EditMovie): Promise<Movie> {
-    try {
-      return await this.moviesRepository.update({
-        id,
-        title,
-        openingCrawl,
-        releaseDate,
-        directorsNames,
-        producersNames,
-        franchiseName,
-      });
-    } catch (error) {
-      // enhace this error handling
-      console.log('error in MoviesService.update: ', error.message);
-
-      return null;
-    }
+    return await this.moviesRepository.update({
+      id,
+      title,
+      openingCrawl,
+      releaseDate,
+      directorsNames,
+      producersNames,
+      franchiseName,
+    });
   }
 }

@@ -1,4 +1,14 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
+import {
+  PrismaClientKnownRequestError,
+  PrismaClientValidationError,
+} from '@prisma/client/runtime/library';
 import { UsersRepository } from 'src/repositories/users';
 import {
   CreateUser,
@@ -9,7 +19,10 @@ import {
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly usersRepository: UsersRepository) {}
+  constructor(
+    private readonly usersRepository: UsersRepository,
+    private readonly logger: Logger,
+  ) {}
 
   async create({
     name,
@@ -17,28 +30,25 @@ export class UsersService {
     password,
     role = RoleEnum.REGULAR,
   }: CreateUser): Promise<User> {
-    try {
-      return await this.usersRepository.create({
-        name,
-        email,
-        password,
-        role,
-      });
-    } catch (error) {
-      // enhace this error handling
-      console.log('error in UsersService.create: ', error.message);
-
-      throw new InternalServerErrorException('Error creating user');
-    }
+    return await this.usersRepository.create({
+      name,
+      email,
+      password,
+      role,
+    });
   }
 
   async getOne({
     id,
     email,
-    isLogin,
-    favorites,
+    isLogin = false,
+    favorites = false,
   }: FindOneUser): Promise<User | null> {
     try {
+      if (!id && !email) {
+        throw new BadRequestException('id or email must be provided');
+      }
+
       return await this.usersRepository.findOne({
         id,
         email,
@@ -46,10 +56,19 @@ export class UsersService {
         favorites,
       });
     } catch (error) {
-      // enhace this error handling
-      console.log('error in UsersService.getOne: ', error.message);
+      if (
+        error instanceof PrismaClientKnownRequestError ||
+        error instanceof PrismaClientValidationError ||
+        error instanceof HttpException
+      ) {
+        throw error;
+      }
 
-      throw new InternalServerErrorException('Error getting user');
+      const message = 'Error getting user. Please try again later.';
+
+      this.logger.error(message, error.stack, 'InternalServerErrorException');
+
+      throw new InternalServerErrorException(message, error.message);
     }
   }
 }
