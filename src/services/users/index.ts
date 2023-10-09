@@ -3,6 +3,7 @@ import {
   HttpException,
   Injectable,
   InternalServerErrorException,
+  Logger,
 } from '@nestjs/common';
 import {
   PrismaClientKnownRequestError,
@@ -18,7 +19,10 @@ import {
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly usersRepository: UsersRepository) {}
+  constructor(
+    private readonly usersRepository: UsersRepository,
+    private readonly logger: Logger,
+  ) {}
 
   async create({
     name,
@@ -52,9 +56,6 @@ export class UsersService {
         favorites,
       });
     } catch (error) {
-      // enhance error logging
-      console.log('error in UsersService.getOne: ', error.message);
-
       if (
         error instanceof PrismaClientKnownRequestError ||
         error instanceof PrismaClientValidationError ||
@@ -63,9 +64,11 @@ export class UsersService {
         throw error;
       }
 
-      throw new InternalServerErrorException(
-        'Error getting user. Please try again later.',
-      );
+      const message = 'Error getting user. Please try again later.';
+
+      this.logger.error(message, error.stack, 'InternalServerErrorException');
+
+      throw new InternalServerErrorException(message, error.message);
     }
   }
 }

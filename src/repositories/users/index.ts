@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { Database } from '../../infrastructure/database';
 import { CreateUser, FindOneUser, User } from './types';
 import {
@@ -8,7 +12,10 @@ import {
 
 @Injectable()
 export class UsersRepository {
-  constructor(private database: Database) {}
+  constructor(
+    private readonly database: Database,
+    private readonly logger: Logger,
+  ) {}
 
   async create({ name, email, password, role }: CreateUser): Promise<User> {
     try {
@@ -42,9 +49,6 @@ export class UsersRepository {
 
       return newUser as User;
     } catch (error) {
-      // enhance error logging
-      console.log('error in UsersRepository.create: ', error);
-
       if (
         error instanceof PrismaClientKnownRequestError ||
         error instanceof PrismaClientValidationError
@@ -52,10 +56,11 @@ export class UsersRepository {
         throw error;
       }
 
-      throw new InternalServerErrorException(
-        'Error creating user. Please try again later.',
-        error.message,
-      );
+      const message = 'Error creating user. Please try again later.';
+
+      this.logger.error(message, error.stack, 'InternalServerErrorException');
+
+      throw new InternalServerErrorException(message, error.message);
     }
   }
 
@@ -92,9 +97,6 @@ export class UsersRepository {
 
       return user as User;
     } catch (error) {
-      // enhance error logging
-      console.log('error in UsersRepository.findOne: ', error.message);
-
       if (
         error instanceof PrismaClientKnownRequestError ||
         error instanceof PrismaClientValidationError
@@ -102,10 +104,11 @@ export class UsersRepository {
         throw error;
       }
 
-      throw new InternalServerErrorException(
-        'Error getting user. Please try again later.',
-        error.message,
-      );
+      const message = 'Error getting user. Please try again later.';
+
+      this.logger.error(message, error.stack, 'InternalServerErrorException');
+
+      throw new InternalServerErrorException(message, error.message);
     }
   }
 }

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { UsersModule } from '../users';
 import { AuthService } from 'src/services/auth';
@@ -24,6 +24,7 @@ import { PassportModule } from '@nestjs/passport';
       provide: APP_GUARD,
       useClass: AuthGuard,
     },
+    Logger,
   ],
   controllers: [AuthController],
   exports: [AuthService],
