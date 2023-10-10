@@ -1,18 +1,39 @@
-import axios from 'axios';
+import { HttpService } from '@nestjs/axios';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
+import { AxiosError, AxiosResponse } from 'axios';
+import { StarwarsMovies } from './types';
 
+@Injectable()
 export class StarwarsRepository {
-  async getMovies(): Promise<Movies> {
+  constructor(
+    private readonly logger: Logger,
+    private readonly httpService: HttpService,
+  ) {}
+
+  async getSeedData(): Promise<StarwarsMovies> {
     try {
-      const { data } = await axios<Movies>({
-        method: 'get',
-        url: 'https://swapi.dev/api/films',
-      });
+      const url = 'https://swapi.dev/api/films';
 
-      return data;
+      const response: AxiosResponse<StarwarsMovies> =
+        await this.httpService.axiosRef.get(url);
+
+      const { data: starwarsMovies } = response;
+
+      return starwarsMovies;
     } catch (error) {
-      console.log('error in StarwarsRepository.getMovies: ', error.message);
+      if (error instanceof AxiosError) {
+        throw error;
+      }
 
-      return { count: 0, results: [] };
+      const message = 'Error getting movies from Starwars API';
+
+      this.logger.error(message, error.stack, 'InternalServerErrorException');
+
+      throw new InternalServerErrorException(message, error.message);
     }
   }
 }
