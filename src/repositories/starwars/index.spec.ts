@@ -5,6 +5,7 @@ import { ModuleMocker, MockFunctionMetadata } from 'jest-mock';
 import { StarwarsRepository } from '.';
 import { Test } from '@nestjs/testing';
 import * as nock from 'nock';
+import { StarwarsMovie, StarwarsMovies } from './types';
 
 const moduleMocker = new ModuleMocker(global);
 

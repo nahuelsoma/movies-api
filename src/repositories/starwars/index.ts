@@ -5,6 +5,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { AxiosError, AxiosResponse } from 'axios';
+import { StarwarsMovies } from './types';
 
 @Injectable()
 export class StarwarsRepository {

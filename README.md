@@ -1,73 +1,77 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# README
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This repository is a Node.js application that utilizes the following technologies:
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+- Nest.js
+- Prisma ORM
+- PostgreSQL database
+- Docker and Docker Compose for local development
 
-## Description
+Below, you'll find a detailed explanation of how to set up and run the application on your local machine.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Productive Domain
 
-## Installation
+The application is deployed to Railway and can be accessed at: https://movies-api-production-9a3f.up.railway.app/
+
+## Steps to Run the Application Locally
+
+Follow these steps to set up and run the application on your local machine:
+
+#### 1. Clone the repository
 
 ```bash
-$ npm install
+git clone https://github.com/nahuelsoma/movies-api.git
 ```
 
-## Running the app
+#### 2. Install the dependencies
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm ci
 ```
 
-## Test
+#### 3. Add environment variables to a .env file in the project's root directory. Make sure to define the following variables
+
+- `DATABASE_URL`: `postgresql://postgres-user:postgres-password@localhost:5432/postgres-movies-database`
+- `AUTH_SECRET`: A secret string for authentication (can be any secure value).
+
+#### 4. Start the Docker container with PostgreSQL and PgAdmin
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+docker compose up
 ```
 
-## Support
+#### 5. Run Prisma migrations to initialize the database
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```bash
+npx prisma migrate dev --name init
+```
 
-## Stay in touch
+#### 6. Start the server
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```bash
+npm run start:dev
+```
 
-## License
+The API will be available at: http://localhost:3000/
 
-Nest is [MIT licensed](LICENSE).
+PgAdmin can be accessed at: http://localhost:5050/browser
+
+## API Documentation
+
+Swagger documentation is available at: http://localhost:3000/api/
+
+To populate the database, make a `POST` request to the `http://localhost:3000/movies/seed` endpoint.
+
+## Running Tests
+
+To run the tests, run the following command:
+
+```bash
+npm run test
+```
+
+## Running Linting
+
+```bash
+npm run lint
+```

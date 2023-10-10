@@ -1,7 +1,6 @@
 import { ModuleMocker, MockFunctionMetadata } from 'jest-mock';
 import { AuthController } from '.';
 import { Test } from '@nestjs/testing';
-import { InternalServerErrorException } from '@nestjs/common';
 import { AuthService } from 'src/services/auth';
 import { RoleEnum, User } from 'src/repositories/users/types';
 
