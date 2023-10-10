@@ -15,12 +15,12 @@ export class GetAllMoviesSchema {
   @ApiProperty()
   @IsInt()
   @Min(1)
-  limit: number = 10;
+  limit = 10;
 
   @ApiProperty()
   @IsInt()
   @Min(0)
-  offset: number = 0;
+  offset = 0;
 }
 
 export class CreateMovieSchema {

@@ -1,4 +1,4 @@
-interface StarwarsMovie {
+export interface StarwarsMovie {
   title: string;
   opening_crawl: string;
   director: string;
@@ -6,7 +6,7 @@ interface StarwarsMovie {
   release_date: string;
 }
 
-interface StarwarsMovies {
+export interface StarwarsMovies {
   count: number;
   results: StarwarsMovie[];
 }

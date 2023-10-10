@@ -57,3 +57,17 @@ PgAdmin can be accessed at: http://localhost:5050/browser
 Swagger documentation is available at: http://localhost:3000/api/
 
 To populate the database, make a `POST` request to the `http://localhost:3000/movies/seed` endpoint.
+
+## Running Tests
+
+To run the tests, run the following command:
+
+```bash
+npm run test
+```
+
+## Running Linting
+
+```bash
+npm run lint
+```
