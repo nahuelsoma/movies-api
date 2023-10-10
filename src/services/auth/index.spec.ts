@@ -75,12 +75,12 @@ describe('AuthService', () => {
         .spyOn(bcrypt, 'compare')
         .mockImplementation(() => Promise.resolve(true));
 
-      const controller = await mockDependencies({
+      const provider = await mockDependencies({
         mockUsersService,
         mockJwtService,
       });
 
-      const result = await controller.login({
+      const result = await provider.login({
         email: 'test@test.com',
         password: 'test password',
       });
@@ -98,12 +98,12 @@ describe('AuthService', () => {
       jest
         .spyOn(bcrypt, 'compare')
         .mockImplementation(() => Promise.resolve(true));
-      const controller = await mockDependencies({
+      const provider = await mockDependencies({
         mockUsersService,
         mockJwtService,
       });
 
-      await controller.login({
+      await provider.login({
         email: 'test@test.com',
         password: 'test password',
       });
@@ -131,13 +131,13 @@ describe('AuthService', () => {
           .spyOn(bcrypt, 'compare')
           .mockImplementation(() => Promise.resolve(false));
 
-        const controller = await mockDependencies({
+        const provider = await mockDependencies({
           mockUsersService,
           mockJwtService,
         });
 
         try {
-          await controller.login({
+          await provider.login({
             email: 'test@test.com',
             password: 'test password',
           });
@@ -165,13 +165,13 @@ describe('AuthService', () => {
           jest
             .spyOn(bcrypt, 'compare')
             .mockImplementation(() => Promise.resolve(true));
-          const controller = await mockDependencies({
+          const provider = await mockDependencies({
             mockUsersService,
             mockJwtService,
           });
 
           try {
-            await controller.login({
+            await provider.login({
               email: 'test@test.com',
               password: 'test password',
             });
@@ -198,13 +198,13 @@ describe('AuthService', () => {
           jest
             .spyOn(bcrypt, 'compare')
             .mockImplementation(() => Promise.resolve(true));
-          const controller = await mockDependencies({
+          const provider = await mockDependencies({
             mockUsersService,
             mockJwtService,
           });
 
           try {
-            await controller.login({
+            await provider.login({
               email: 'test@test.com',
               password: 'test password',
             });
@@ -228,13 +228,13 @@ describe('AuthService', () => {
           jest
             .spyOn(bcrypt, 'compare')
             .mockImplementation(() => Promise.resolve(true));
-          const controller = await mockDependencies({
+          const provider = await mockDependencies({
             mockUsersService,
             mockJwtService,
           });
 
           try {
-            await controller.login({
+            await provider.login({
               email: 'test@test.com',
               password: 'test password',
             });
@@ -257,13 +257,13 @@ describe('AuthService', () => {
           jest
             .spyOn(bcrypt, 'compare')
             .mockImplementation(() => Promise.resolve(true));
-          const controller = await mockDependencies({
+          const provider = await mockDependencies({
             mockUsersService,
             mockJwtService,
           });
 
           try {
-            await controller.login({
+            await provider.login({
               email: 'test@test.com',
               password: 'test password',
             });
@@ -297,12 +297,12 @@ describe('AuthService', () => {
         .spyOn(bcrypt, 'hash')
         .mockImplementation(() => Promise.resolve('hashed password'));
 
-      const controller = await mockDependencies({
+      const provider = await mockDependencies({
         mockUsersService,
         mockJwtService,
       });
 
-      const result = await controller.signUp({
+      const result = await provider.signUp({
         name: 'test user',
         email: 'test@test.com',
         password: 'test password',
@@ -321,12 +321,12 @@ describe('AuthService', () => {
         .spyOn(bcrypt, 'hash')
         .mockImplementation(() => Promise.resolve('hashed password'));
 
-      const controller = await mockDependencies({
+      const provider = await mockDependencies({
         mockUsersService,
         mockJwtService,
       });
 
-      await controller.signUp({
+      await provider.signUp({
         name: 'test user',
         email: 'test@test.com',
         password: 'test password',
@@ -357,13 +357,13 @@ describe('AuthService', () => {
           jest
             .spyOn(bcrypt, 'hash')
             .mockImplementation(() => Promise.resolve('hashed password'));
-          const controller = await mockDependencies({
+          const provider = await mockDependencies({
             mockUsersService,
             mockJwtService,
           });
 
           try {
-            await controller.signUp({
+            await provider.signUp({
               name: 'test user',
               email: 'test@test.com',
               password: 'test password',
@@ -390,13 +390,13 @@ describe('AuthService', () => {
           jest
             .spyOn(bcrypt, 'hash')
             .mockImplementation(() => Promise.resolve('hashed password'));
-          const controller = await mockDependencies({
+          const provider = await mockDependencies({
             mockUsersService,
             mockJwtService,
           });
 
           try {
-            await controller.signUp({
+            await provider.signUp({
               name: 'test user',
               email: 'test@test.com',
               password: 'test password',
@@ -420,13 +420,13 @@ describe('AuthService', () => {
           jest
             .spyOn(bcrypt, 'hash')
             .mockImplementation(() => Promise.resolve('hashed password'));
-          const controller = await mockDependencies({
+          const provider = await mockDependencies({
             mockUsersService,
             mockJwtService,
           });
 
           try {
-            await controller.signUp({
+            await provider.signUp({
               name: 'test user',
               email: 'test@test.com',
               password: 'test password',
@@ -449,13 +449,13 @@ describe('AuthService', () => {
           jest
             .spyOn(bcrypt, 'hash')
             .mockImplementation(() => Promise.resolve('hashed password'));
-          const controller = await mockDependencies({
+          const provider = await mockDependencies({
             mockUsersService,
             mockJwtService,
           });
 
           try {
-            await controller.signUp({
+            await provider.signUp({
               name: 'test user',
               email: 'test@test.com',
               password: 'test password',

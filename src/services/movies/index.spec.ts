@@ -74,12 +74,12 @@ describe('MoviesService', () => {
         create: jest.fn().mockResolvedValue(mockMovie),
       };
       const mockStarwarsRepository = jest.fn();
-      const controller = await mockDependencies({
+      const provider = await mockDependencies({
         mockMoviesRepository,
         mockStarwarsRepository,
       });
 
-      const result = await controller.create({
+      const result = await provider.create({
         title: 'test movie',
         openingCrawl: 'test opening crawl',
         releaseDate: new Date('2021-01-01'),
@@ -96,12 +96,12 @@ describe('MoviesService', () => {
         create: jest.fn().mockResolvedValue(mockMovie),
       };
       const mockStarwarsRepository = jest.fn();
-      const controller = await mockDependencies({
+      const provider = await mockDependencies({
         mockMoviesRepository,
         mockStarwarsRepository,
       });
 
-      await controller.create({
+      await provider.create({
         title: 'test movie',
         openingCrawl: 'test opening crawl',
         releaseDate: new Date('2021-01-01'),
@@ -131,12 +131,12 @@ describe('MoviesService', () => {
         delete: jest.fn().mockResolvedValue(mockMovie),
       };
       const mockStarwarsRepository = jest.fn();
-      const controller = await mockDependencies({
+      const provider = await mockDependencies({
         mockMoviesRepository,
         mockStarwarsRepository,
       });
 
-      const result = await controller.delete(1);
+      const result = await provider.delete(1);
 
       expect(result).toEqual(expected);
     });
@@ -146,12 +146,12 @@ describe('MoviesService', () => {
         delete: jest.fn().mockResolvedValue(mockMovie),
       };
       const mockStarwarsRepository = jest.fn();
-      const controller = await mockDependencies({
+      const provider = await mockDependencies({
         mockMoviesRepository,
         mockStarwarsRepository,
       });
 
-      await controller.delete(1);
+      await provider.delete(1);
 
       expect(mockMoviesRepository.delete).toHaveBeenCalledWith(1);
     });
@@ -163,12 +163,12 @@ describe('MoviesService', () => {
         findAll: jest.fn().mockResolvedValue([mockMovie]),
       };
       const mockStarwarsRepository = jest.fn();
-      const controller = await mockDependencies({
+      const provider = await mockDependencies({
         mockMoviesRepository,
         mockStarwarsRepository,
       });
 
-      const result = await controller.getAll({
+      const result = await provider.getAll({
         limit: 10,
         offset: 0,
       });
@@ -181,12 +181,12 @@ describe('MoviesService', () => {
         findAll: jest.fn().mockResolvedValue([mockMovie]),
       };
       const mockStarwarsRepository = jest.fn();
-      const controller = await mockDependencies({
+      const provider = await mockDependencies({
         mockMoviesRepository,
         mockStarwarsRepository,
       });
 
-      await controller.getAll({
+      await provider.getAll({
         limit: 10,
         offset: 0,
       });
@@ -205,12 +205,12 @@ describe('MoviesService', () => {
           findOne: jest.fn().mockResolvedValue(mockMovie),
         };
         const mockStarwarsRepository = jest.fn();
-        const controller = await mockDependencies({
+        const provider = await mockDependencies({
           mockMoviesRepository,
           mockStarwarsRepository,
         });
 
-        const result = await controller.getOne(1);
+        const result = await provider.getOne(1);
 
         expect(result).toEqual(mockMovie);
       });
@@ -222,13 +222,13 @@ describe('MoviesService', () => {
           findOne: jest.fn().mockResolvedValue(null),
         };
         const mockStarwarsRepository = jest.fn();
-        const controller = await mockDependencies({
+        const provider = await mockDependencies({
           mockMoviesRepository,
           mockStarwarsRepository,
         });
 
         try {
-          await controller.getOne(1);
+          await provider.getOne(1);
         } catch (error) {
           expect(error).toBeInstanceOf(NotFoundException);
           expect(error.message).toBe('Movie with id 1 not found');
@@ -241,12 +241,12 @@ describe('MoviesService', () => {
         findOne: jest.fn().mockResolvedValue(mockMovie),
       };
       const mockStarwarsRepository = jest.fn();
-      const controller = await mockDependencies({
+      const provider = await mockDependencies({
         mockMoviesRepository,
         mockStarwarsRepository,
       });
 
-      await controller.getOne(1);
+      await provider.getOne(1);
 
       expect(mockMoviesRepository.findOne).toHaveBeenCalledWith(1);
     });
@@ -272,12 +272,12 @@ describe('MoviesService', () => {
       const mockStarwarsRepository = {
         getSeedData: jest.fn().mockResolvedValue(mockedStarwarsMovies),
       };
-      const controller = await mockDependencies({
+      const provider = await mockDependencies({
         mockMoviesRepository,
         mockStarwarsRepository,
       });
 
-      const result = await controller.seedData();
+      const result = await provider.seedData();
 
       expect(result).toEqual([mockMovie]);
     });
@@ -289,12 +289,12 @@ describe('MoviesService', () => {
       const mockStarwarsRepository = {
         getSeedData: jest.fn().mockResolvedValue(mockedStarwarsMovies),
       };
-      const controller = await mockDependencies({
+      const provider = await mockDependencies({
         mockMoviesRepository,
         mockStarwarsRepository,
       });
 
-      await controller.seedData();
+      await provider.seedData();
 
       expect(mockStarwarsRepository.getSeedData).toHaveBeenCalled();
       expect(mockMoviesRepository.create).toHaveBeenCalledWith({
@@ -317,13 +317,13 @@ describe('MoviesService', () => {
             .fn()
             .mockRejectedValue(new AxiosError('test error')),
         };
-        const controller = await mockDependencies({
+        const provider = await mockDependencies({
           mockMoviesRepository,
           mockStarwarsRepository,
         });
 
         try {
-          await controller.seedData();
+          await provider.seedData();
         } catch (error) {
           expect(error).toBeInstanceOf(AxiosError);
           expect(error.message).toBe('test error');
@@ -345,13 +345,13 @@ describe('MoviesService', () => {
           const mockStarwarsRepository = {
             getSeedData: jest.fn().mockResolvedValue(mockedStarwarsMovies),
           };
-          const controller = await mockDependencies({
+          const provider = await mockDependencies({
             mockMoviesRepository,
             mockStarwarsRepository,
           });
 
           try {
-            await controller.seedData();
+            await provider.seedData();
           } catch (error) {
             expect(error).toBeInstanceOf(PrismaClientKnownRequestError);
             expect(error.message).toBe('test error');
@@ -372,13 +372,13 @@ describe('MoviesService', () => {
           const mockStarwarsRepository = {
             getSeedData: jest.fn().mockResolvedValue(mockedStarwarsMovies),
           };
-          const controller = await mockDependencies({
+          const provider = await mockDependencies({
             mockMoviesRepository,
             mockStarwarsRepository,
           });
 
           try {
-            await controller.seedData();
+            await provider.seedData();
           } catch (error) {
             expect(error).toBeInstanceOf(PrismaClientValidationError);
             expect(error.message).toBe('test error');
@@ -396,13 +396,13 @@ describe('MoviesService', () => {
           const mockStarwarsRepository = {
             getSeedData: jest.fn().mockResolvedValue(mockedStarwarsMovies),
           };
-          const controller = await mockDependencies({
+          const provider = await mockDependencies({
             mockMoviesRepository,
             mockStarwarsRepository,
           });
 
           try {
-            await controller.seedData();
+            await provider.seedData();
           } catch (error) {
             expect(error).toBeInstanceOf(HttpException);
             expect(error.message).toBe('test error');
@@ -420,13 +420,13 @@ describe('MoviesService', () => {
         const mockStarwarsRepository = {
           getSeedData: jest.fn().mockResolvedValue(new Error('test error')),
         };
-        const controller = await mockDependencies({
+        const provider = await mockDependencies({
           mockMoviesRepository,
           mockStarwarsRepository,
         });
 
         try {
-          await controller.seedData();
+          await provider.seedData();
         } catch (error) {
           expect(error).toBeInstanceOf(InternalServerErrorException);
           expect(error.message).toBe('Error seeding movies');
@@ -441,12 +441,12 @@ describe('MoviesService', () => {
         update: jest.fn().mockResolvedValue(mockMovie),
       };
       const mockStarwarsRepository = jest.fn();
-      const controller = await mockDependencies({
+      const provider = await mockDependencies({
         mockMoviesRepository,
         mockStarwarsRepository,
       });
 
-      const result = await controller.update({
+      const result = await provider.update({
         id: 1,
         title: 'test movie',
         openingCrawl: 'test opening crawl',
@@ -464,12 +464,12 @@ describe('MoviesService', () => {
         update: jest.fn().mockResolvedValue(mockMovie),
       };
       const mockStarwarsRepository = jest.fn();
-      const controller = await mockDependencies({
+      const provider = await mockDependencies({
         mockMoviesRepository,
         mockStarwarsRepository,
       });
 
-      await controller.update({
+      await provider.update({
         id: 1,
         title: 'test movie',
         openingCrawl: 'test opening crawl',
