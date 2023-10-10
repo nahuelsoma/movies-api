@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Add Swagger ([#11](https://github.com/nahuelsoma/movies-api/pull/11))
 - Add e2e tests ([#10](https://github.com/nahuelsoma/movies-api/pull/10))
 - Add controllers, services and repositories unit tests ([#6](https://github.com/nahuelsoma/movies-api/pull/6))
 - Add schema validation ([#9](https://github.com/nahuelsoma/movies-api/pull/9))

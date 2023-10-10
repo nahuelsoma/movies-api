@@ -11,6 +11,7 @@ import {
 } from 'nest-winston';
 import * as winston from 'winston';
 import { Logger, ValidationPipe } from '@nestjs/common';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(CoreModule, {
@@ -25,6 +26,7 @@ async function bootstrap() {
       ],
     }),
   });
+
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -33,11 +35,22 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
+
   app.useGlobalFilters(
     new PrismaKnownExceptionsFilter(app.get(Logger)),
     new PrismaValidationExceptionsFilter(app.get(Logger)),
     new AxiosExceptionsFilter(app.get(Logger)),
   );
+
+  const config = new DocumentBuilder()
+    .setTitle('Movies API')
+    .setDescription('The API for your favorite movies')
+    .setVersion('1.0')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
+
   await app.listen(3000);
 }
 bootstrap();
