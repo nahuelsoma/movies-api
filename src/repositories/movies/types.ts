@@ -27,7 +27,7 @@ export interface Movie {
   id: number;
   title: string;
   opening_crawl: string;
-  release_date: Date;
+  release_date: Date | string;
   directors: Director[];
   producers: Producer[];
   franchise: Franchise;
