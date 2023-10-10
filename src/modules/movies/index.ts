@@ -4,9 +4,10 @@ import { MoviesService } from 'src/services/movies';
 import { StarwarsRepository } from 'src/repositories/starwars';
 import { MoviesRepository } from 'src/repositories/movies';
 import { Database } from 'src/infrastructure/database';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
-  imports: [],
+  imports: [HttpModule],
   controllers: [MoviesController],
   providers: [
     Database,

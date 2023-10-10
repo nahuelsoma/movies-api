@@ -56,7 +56,7 @@ export class UsersRepository {
         throw error;
       }
 
-      const message = 'Error creating user. Please try again later.';
+      const message = 'Error creating user';
 
       this.logger.error(message, error.stack, 'InternalServerErrorException');
 
@@ -104,7 +104,7 @@ export class UsersRepository {
         throw error;
       }
 
-      const message = 'Error getting user. Please try again later.';
+      const message = 'Error finding user';
 
       this.logger.error(message, error.stack, 'InternalServerErrorException');
 

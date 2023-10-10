@@ -10,12 +10,7 @@ import {
   PrismaClientValidationError,
 } from '@prisma/client/runtime/library';
 import { UsersRepository } from 'src/repositories/users';
-import {
-  CreateUser,
-  FindOneUser,
-  RoleEnum,
-  User,
-} from 'src/repositories/users/types';
+import { CreateUser, FindOneUser, User } from 'src/repositories/users/types';
 
 @Injectable()
 export class UsersService {
@@ -24,12 +19,7 @@ export class UsersService {
     private readonly logger: Logger,
   ) {}
 
-  async create({
-    name,
-    email,
-    password,
-    role = RoleEnum.REGULAR,
-  }: CreateUser): Promise<User> {
+  async create({ name, email, password, role }: CreateUser): Promise<User> {
     return await this.usersRepository.create({
       name,
       email,
@@ -46,7 +36,7 @@ export class UsersService {
   }: FindOneUser): Promise<User | null> {
     try {
       if (!id && !email) {
-        throw new BadRequestException('id or email must be provided');
+        throw new BadRequestException('id or email must be provided.');
       }
 
       return await this.usersRepository.findOne({

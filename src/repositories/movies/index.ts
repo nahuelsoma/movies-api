@@ -2,6 +2,7 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
+  NotFoundException,
 } from '@nestjs/common';
 import { Database } from '../../infrastructure/database';
 import { CreateMovie, EditMovie, FindAll, Movie } from './types';
@@ -76,8 +77,6 @@ export class MoviesRepository {
         },
       });
     } catch (error) {
-      // enhance error logging
-
       if (
         error instanceof PrismaClientKnownRequestError ||
         error instanceof PrismaClientValidationError
@@ -85,7 +84,7 @@ export class MoviesRepository {
         throw error;
       }
 
-      const message = 'Error creating movie. Please try again later.';
+      const message = 'Error creating movie';
 
       this.logger.error(message, error.stack, 'InternalServerErrorException');
 
@@ -93,7 +92,7 @@ export class MoviesRepository {
     }
   }
 
-  async delete(id: number): Promise<Movie> {
+  async delete(id: number): Promise<Movie | null> {
     try {
       return await this.database.movie.delete({
         where: { id },
@@ -176,7 +175,7 @@ export class MoviesRepository {
         throw error;
       }
 
-      const message = 'Error getting all movies';
+      const message = 'Error finding movies';
 
       this.logger.error(message, error.stack, 'InternalServerErrorException');
 
@@ -221,7 +220,7 @@ export class MoviesRepository {
         throw error;
       }
 
-      const message = `Error getting movie with id ${id}`;
+      const message = `Error finding movie with id ${id}`;
 
       this.logger.error(message, error.stack, 'InternalServerErrorException');
 
@@ -300,10 +299,20 @@ export class MoviesRepository {
         },
       });
     } catch (error) {
-      if (
-        error instanceof PrismaClientKnownRequestError ||
-        error instanceof PrismaClientValidationError
-      ) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        if (error.code === 'P2016') {
+          const message = `Movie with id ${id} not found`;
+
+          throw new NotFoundException(message, {
+            cause: error,
+            description: 'Not found',
+          });
+        }
+
+        throw error;
+      }
+
+      if (error instanceof PrismaClientValidationError) {
         throw error;
       }
 
