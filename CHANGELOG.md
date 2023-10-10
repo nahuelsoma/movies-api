@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.1.1] - 2023-10-10
+
+- Edit Readme ([#15](https://github.com/nahuelsoma/movies-api/pull/15))
+
 ## [0.1.0] - 2023-10-10
 
 - Add Readme ([#12](https://github.com/nahuelsoma/movies-api/pull/12))
