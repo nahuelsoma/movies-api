@@ -9,7 +9,11 @@ This repository is a Node.js application that utilizes the following technologie
 
 Below, you'll find a detailed explanation of how to set up and run the application on your local machine.
 
-## Steps to Run the Application
+## Productive Domain
+
+The application is deployed to Railway and can be accessed at: https://movies-api-production-9a3f.up.railway.app/
+
+## Steps to Run the Application Locally
 
 Follow these steps to set up and run the application on your local machine:
 
