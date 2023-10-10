@@ -48,9 +48,9 @@ describe('UsersRepository', () => {
           create: jest.fn().mockResolvedValue(mockUser),
         },
       };
-      const controller = await mockDependencies({ database });
+      const provider = await mockDependencies({ database });
 
-      const result = await controller.create({
+      const result = await provider.create({
         name: 'Test User',
         email: 'test@test.com',
         password: 'test password',
@@ -66,9 +66,9 @@ describe('UsersRepository', () => {
           create: jest.fn().mockResolvedValue(mockUser),
         },
       };
-      const controller = await mockDependencies({ database });
+      const provider = await mockDependencies({ database });
 
-      await controller.create({
+      await provider.create({
         name: 'Test User',
         email: 'test@test.com',
         password: 'test password',
@@ -117,10 +117,10 @@ describe('UsersRepository', () => {
               ),
             },
           };
-          const controller = await mockDependencies({ database });
+          const provider = await mockDependencies({ database });
 
           try {
-            await controller.create({
+            await provider.create({
               name: 'Test User',
               email: 'test@test.com',
               password: 'test password',
@@ -146,10 +146,10 @@ describe('UsersRepository', () => {
             ),
           },
         };
-        const controller = await mockDependencies({ database });
+        const provider = await mockDependencies({ database });
 
         try {
-          await controller.create({
+          await provider.create({
             name: 'Test User',
             email: 'test@test.com',
             password: 'test password',
@@ -169,10 +169,10 @@ describe('UsersRepository', () => {
             create: jest.fn().mockRejectedValue(new Error('test error')),
           },
         };
-        const controller = await mockDependencies({ database });
+        const provider = await mockDependencies({ database });
 
         try {
-          await controller.create({
+          await provider.create({
             name: 'Test User',
             email: 'test@test.com',
             password: 'test password',
@@ -194,9 +194,9 @@ describe('UsersRepository', () => {
             findUnique: jest.fn().mockResolvedValue(mockUser),
           },
         };
-        const controller = await mockDependencies({ database });
+        const provider = await mockDependencies({ database });
 
-        const result = await controller.findOne({
+        const result = await provider.findOne({
           id: 3,
           email: 'test@test.com',
           favorites: false,
@@ -214,9 +214,9 @@ describe('UsersRepository', () => {
             findUnique: jest.fn().mockResolvedValue(null),
           },
         };
-        const controller = await mockDependencies({ database });
+        const provider = await mockDependencies({ database });
 
-        const result = await controller.findOne({
+        const result = await provider.findOne({
           id: 3,
           email: 'test@test.com',
           favorites: false,
@@ -240,10 +240,10 @@ describe('UsersRepository', () => {
               ),
             },
           };
-          const controller = await mockDependencies({ database });
+          const provider = await mockDependencies({ database });
 
           try {
-            await controller.findOne({
+            await provider.findOne({
               id: 3,
               email: 'test@test.com',
               favorites: false,
@@ -268,10 +268,10 @@ describe('UsersRepository', () => {
               ),
             },
           };
-          const controller = await mockDependencies({ database });
+          const provider = await mockDependencies({ database });
 
           try {
-            await controller.findOne({
+            await provider.findOne({
               id: 3,
               email: 'test@test.com',
               favorites: false,
@@ -291,10 +291,10 @@ describe('UsersRepository', () => {
               findUnique: jest.fn().mockRejectedValue(new Error('test error')),
             },
           };
-          const controller = await mockDependencies({ database });
+          const provider = await mockDependencies({ database });
 
           try {
-            await controller.findOne({
+            await provider.findOne({
               id: 3,
               email: 'test@test.com',
               favorites: false,

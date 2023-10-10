@@ -66,9 +66,9 @@ describe('MoviesRepository', () => {
           create: jest.fn().mockResolvedValue(mockMovie),
         },
       };
-      const controller = await mockDependencies({ database });
+      const provider = await mockDependencies({ database });
 
-      const result = await controller.create({
+      const result = await provider.create({
         title: 'test movie',
         openingCrawl: 'test opening crawl',
         releaseDate: new Date('2021-01-01'),
@@ -86,9 +86,9 @@ describe('MoviesRepository', () => {
           create: jest.fn().mockResolvedValue(mockMovie),
         },
       };
-      const controller = await mockDependencies({ database });
+      const provider = await mockDependencies({ database });
 
-      await controller.create({
+      await provider.create({
         title: 'test movie',
         openingCrawl: 'test opening crawl',
         releaseDate: new Date('2021-01-01'),
@@ -165,10 +165,10 @@ describe('MoviesRepository', () => {
               ),
             },
           };
-          const controller = await mockDependencies({ database });
+          const provider = await mockDependencies({ database });
 
           try {
-            await controller.create({
+            await provider.create({
               title: 'test movie',
               openingCrawl: 'test opening crawl',
               releaseDate: new Date('2021-01-01'),
@@ -195,10 +195,10 @@ describe('MoviesRepository', () => {
               ),
             },
           };
-          const controller = await mockDependencies({ database });
+          const provider = await mockDependencies({ database });
 
           try {
-            await controller.create({
+            await provider.create({
               title: 'test movie',
               openingCrawl: 'test opening crawl',
               releaseDate: new Date('2021-01-01'),
@@ -220,10 +220,10 @@ describe('MoviesRepository', () => {
               create: jest.fn().mockRejectedValue(new Error('test error')),
             },
           };
-          const controller = await mockDependencies({ database });
+          const provider = await mockDependencies({ database });
 
           try {
-            await controller.create({
+            await provider.create({
               title: 'test movie',
               openingCrawl: 'test opening crawl',
               releaseDate: new Date('2021-01-01'),
@@ -248,9 +248,9 @@ describe('MoviesRepository', () => {
             delete: jest.fn().mockResolvedValue(mockMovie),
           },
         };
-        const controller = await mockDependencies({ database });
+        const provider = await mockDependencies({ database });
 
-        const result = await controller.delete(1);
+        const result = await provider.delete(1);
 
         expect(result).toEqual(mockMovie);
       });
@@ -263,9 +263,9 @@ describe('MoviesRepository', () => {
             delete: jest.fn().mockResolvedValue(null),
           },
         };
-        const controller = await mockDependencies({ database });
+        const provider = await mockDependencies({ database });
 
-        const result = await controller.delete(1);
+        const result = await provider.delete(1);
 
         expect(result).toBeNull();
       });
@@ -277,9 +277,9 @@ describe('MoviesRepository', () => {
           delete: jest.fn().mockResolvedValue(mockMovie),
         },
       };
-      const controller = await mockDependencies({ database });
+      const provider = await mockDependencies({ database });
 
-      await controller.delete(1);
+      await provider.delete(1);
 
       expect(database.movie.delete).toHaveBeenCalledWith({
         where: { id: 1 },
@@ -323,10 +323,10 @@ describe('MoviesRepository', () => {
               ),
             },
           };
-          const controller = await mockDependencies({ database });
+          const provider = await mockDependencies({ database });
 
           try {
-            await controller.delete(1);
+            await provider.delete(1);
           } catch (error) {
             expect(error).toBeInstanceOf(PrismaClientKnownRequestError);
             expect(error.message).toBe('test error');
@@ -346,10 +346,10 @@ describe('MoviesRepository', () => {
               ),
             },
           };
-          const controller = await mockDependencies({ database });
+          const provider = await mockDependencies({ database });
 
           try {
-            await controller.delete(1);
+            await provider.delete(1);
           } catch (error) {
             expect(error).toBeInstanceOf(PrismaClientValidationError);
             expect(error.message).toBe('test error');
@@ -364,10 +364,10 @@ describe('MoviesRepository', () => {
               delete: jest.fn().mockRejectedValue(new Error('test error')),
             },
           };
-          const controller = await mockDependencies({ database });
+          const provider = await mockDependencies({ database });
 
           try {
-            await controller.delete(1);
+            await provider.delete(1);
           } catch (error) {
             expect(error).toBeInstanceOf(InternalServerErrorException);
             expect(error.message).toBe('Error deleting movie with id 1');
@@ -384,9 +384,9 @@ describe('MoviesRepository', () => {
           findMany: jest.fn().mockResolvedValue([mockMovie]),
         },
       };
-      const controller = await mockDependencies({ database });
+      const provider = await mockDependencies({ database });
 
-      const result = await controller.findAll({
+      const result = await provider.findAll({
         skip: 0,
         take: 10,
       });
@@ -400,9 +400,9 @@ describe('MoviesRepository', () => {
           findMany: jest.fn().mockResolvedValue([mockMovie]),
         },
       };
-      const controller = await mockDependencies({ database });
+      const provider = await mockDependencies({ database });
 
-      await controller.findAll({
+      await provider.findAll({
         skip: 0,
         take: 10,
       });
@@ -450,10 +450,10 @@ describe('MoviesRepository', () => {
               ),
             },
           };
-          const controller = await mockDependencies({ database });
+          const provider = await mockDependencies({ database });
 
           try {
-            await controller.findAll({
+            await provider.findAll({
               skip: 0,
               take: 10,
             });
@@ -476,10 +476,10 @@ describe('MoviesRepository', () => {
               ),
             },
           };
-          const controller = await mockDependencies({ database });
+          const provider = await mockDependencies({ database });
 
           try {
-            await controller.findAll({
+            await provider.findAll({
               skip: 0,
               take: 10,
             });
@@ -497,10 +497,10 @@ describe('MoviesRepository', () => {
               findMany: jest.fn().mockRejectedValue(new Error('test error')),
             },
           };
-          const controller = await mockDependencies({ database });
+          const provider = await mockDependencies({ database });
 
           try {
-            await controller.findAll({
+            await provider.findAll({
               skip: 0,
               take: 10,
             });
@@ -521,9 +521,9 @@ describe('MoviesRepository', () => {
             findUnique: jest.fn().mockResolvedValue(mockMovie),
           },
         };
-        const controller = await mockDependencies({ database });
+        const provider = await mockDependencies({ database });
 
-        const result = await controller.findOne(1);
+        const result = await provider.findOne(1);
 
         expect(result).toEqual(mockMovie);
       });
@@ -536,9 +536,9 @@ describe('MoviesRepository', () => {
             findUnique: jest.fn().mockResolvedValue(null),
           },
         };
-        const controller = await mockDependencies({ database });
+        const provider = await mockDependencies({ database });
 
-        const result = await controller.findOne(1);
+        const result = await provider.findOne(1);
 
         expect(result).toBeNull();
       });
@@ -550,9 +550,9 @@ describe('MoviesRepository', () => {
           findUnique: jest.fn().mockResolvedValue(mockMovie),
         },
       };
-      const controller = await mockDependencies({ database });
+      const provider = await mockDependencies({ database });
 
-      await controller.findOne(1);
+      await provider.findOne(1);
 
       expect(database.movie.findUnique).toHaveBeenCalledWith({
         where: { id: 1 },
@@ -596,10 +596,10 @@ describe('MoviesRepository', () => {
               ),
             },
           };
-          const controller = await mockDependencies({ database });
+          const provider = await mockDependencies({ database });
 
           try {
-            await controller.findOne(1);
+            await provider.findOne(1);
           } catch (error) {
             expect(error).toBeInstanceOf(PrismaClientKnownRequestError);
             expect(error.message).toBe('test error');
@@ -619,10 +619,10 @@ describe('MoviesRepository', () => {
               ),
             },
           };
-          const controller = await mockDependencies({ database });
+          const provider = await mockDependencies({ database });
 
           try {
-            await controller.findOne(1);
+            await provider.findOne(1);
           } catch (error) {
             expect(error).toBeInstanceOf(PrismaClientValidationError);
             expect(error.message).toBe('test error');
@@ -637,10 +637,10 @@ describe('MoviesRepository', () => {
               findUnique: jest.fn().mockRejectedValue(new Error('test error')),
             },
           };
-          const controller = await mockDependencies({ database });
+          const provider = await mockDependencies({ database });
 
           try {
-            await controller.findOne(1);
+            await provider.findOne(1);
           } catch (error) {
             expect(error).toBeInstanceOf(InternalServerErrorException);
             expect(error.message).toBe('Error finding movie with id 1');
@@ -658,9 +658,9 @@ describe('MoviesRepository', () => {
             update: jest.fn().mockResolvedValue(mockMovie),
           },
         };
-        const controller = await mockDependencies({ database });
+        const provider = await mockDependencies({ database });
 
-        const result = await controller.update({
+        const result = await provider.update({
           id: 1,
           title: 'test movie',
           openingCrawl: 'test opening crawl',
@@ -686,10 +686,10 @@ describe('MoviesRepository', () => {
             ),
           },
         };
-        const controller = await mockDependencies({ database });
+        const provider = await mockDependencies({ database });
 
         try {
-          await controller.update({
+          await provider.update({
             id: 1,
             title: 'test movie',
             openingCrawl: 'test opening crawl',
@@ -718,10 +718,10 @@ describe('MoviesRepository', () => {
               ),
             },
           };
-          const controller = await mockDependencies({ database });
+          const provider = await mockDependencies({ database });
 
           try {
-            await controller.update({
+            await provider.update({
               id: 1,
               title: 'test movie',
               openingCrawl: 'test opening crawl',
@@ -749,10 +749,10 @@ describe('MoviesRepository', () => {
               ),
             },
           };
-          const controller = await mockDependencies({ database });
+          const provider = await mockDependencies({ database });
 
           try {
-            await controller.update({
+            await provider.update({
               id: 1,
               title: 'test movie',
               openingCrawl: 'test opening crawl',
@@ -775,10 +775,10 @@ describe('MoviesRepository', () => {
               update: jest.fn().mockRejectedValue(new Error('test error')),
             },
           };
-          const controller = await mockDependencies({ database });
+          const provider = await mockDependencies({ database });
 
           try {
-            await controller.update({
+            await provider.update({
               id: 1,
               title: 'test movie',
               openingCrawl: 'test opening crawl',

@@ -1,5 +1,4 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
-import { Public } from 'src/decorators';
 import { LoginSchema, SignUpSchema } from 'src/schemas/auth';
 import { AuthService } from 'src/services/auth';
 
@@ -7,7 +6,6 @@ import { AuthService } from 'src/services/auth';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Public()
   @HttpCode(HttpStatus.OK)
   @Post('login')
   async login(@Body() LoginSchema: LoginSchema) {
@@ -16,7 +14,6 @@ export class AuthController {
     return await this.authService.login({ email, password });
   }
 
-  @Public()
   @HttpCode(HttpStatus.CREATED)
   @Post('sign-up')
   async signUp(@Body() signUpSchema: SignUpSchema) {

@@ -9,33 +9,31 @@ import {
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { IS_PUBLIC_KEY, ROLES_KEY } from 'src/decorators';
+import { ROLES_KEY } from 'src/decorators';
 import { RoleEnum } from 'src/repositories/users/types';
-import { JWTPayload } from './types';
+import { JWTPayload } from 'src/services/auth/types';
 
 @Injectable()
-export class AuthGuard implements CanActivate {
+export class RolesGuard implements CanActivate {
   constructor(
     private readonly jwtService: JwtService,
     private readonly reflector: Reflector,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    // Check if the route is public
-    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+    const requiredRoles = this.reflector.getAllAndOverride<RoleEnum[]>(
+      ROLES_KEY,
+      [context.getHandler(), context.getClass()],
+    );
 
-    if (isPublic) {
+    if (!requiredRoles || requiredRoles.length === 0) {
       return true;
     }
 
-    // Check if the user is authenticated
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
     if (!token) {
-      throw new BadRequestException('No token provided.');
+      throw new BadRequestException('No token provided');
     }
 
     let user: JWTPayload;
@@ -49,21 +47,11 @@ export class AuthGuard implements CanActivate {
 
       request['user'] = user;
     } catch {
-      throw new UnauthorizedException('Invalid token.');
-    }
-
-    // Check if the user has the required role
-    const requiredRoles = this.reflector.getAllAndOverride<RoleEnum[]>(
-      ROLES_KEY,
-      [context.getHandler(), context.getClass()],
-    );
-
-    if (!requiredRoles) {
-      return true;
+      throw new UnauthorizedException('Invalid token');
     }
 
     if (!requiredRoles.includes(user.role)) {
-      throw new ForbiddenException("You don't have the required role.");
+      throw new ForbiddenException("You don't have the required role");
     }
 
     return true;

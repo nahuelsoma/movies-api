@@ -52,9 +52,9 @@ describe('UsersService', () => {
       const mockUsersRepository = {
         create: jest.fn().mockResolvedValue(mockUser),
       };
-      const service = await mockDependencies({ mockUsersRepository });
+      const provider = await mockDependencies({ mockUsersRepository });
 
-      const result = await service.create({
+      const result = await provider.create({
         name: 'test user',
         email: 'test@test.com',
         password: 'test password',
@@ -91,9 +91,9 @@ describe('UsersService', () => {
       const mockUsersRepository = {
         findOne: jest.fn().mockResolvedValue(mockUser),
       };
-      const service = await mockDependencies({ mockUsersRepository });
+      const provider = await mockDependencies({ mockUsersRepository });
 
-      const result = await service.getOne({
+      const result = await provider.getOne({
         id: 1,
       });
 
@@ -126,10 +126,10 @@ describe('UsersService', () => {
         const mockUsersRepository = {
           findOne: jest.fn().mockResolvedValue(mockUser),
         };
-        const service = await mockDependencies({ mockUsersRepository });
+        const provider = await mockDependencies({ mockUsersRepository });
 
         try {
-          await service.getOne({
+          await provider.getOne({
             id: undefined,
             email: undefined,
           });
@@ -152,12 +152,12 @@ describe('UsersService', () => {
               }),
             ),
           };
-          const service = await mockDependencies({
+          const provider = await mockDependencies({
             mockUsersRepository,
           });
 
           try {
-            await service.getOne({
+            await provider.getOne({
               id: 1,
               email: 'test@test.com',
             });
@@ -178,12 +178,12 @@ describe('UsersService', () => {
               }),
             ),
           };
-          const service = await mockDependencies({
+          const provider = await mockDependencies({
             mockUsersRepository,
           });
 
           try {
-            await service.getOne({
+            await provider.getOne({
               id: 1,
               email: 'test@test.com',
             });
@@ -201,12 +201,12 @@ describe('UsersService', () => {
               .fn()
               .mockRejectedValue(new HttpException('test error', 400)),
           };
-          const service = await mockDependencies({
+          const provider = await mockDependencies({
             mockUsersRepository,
           });
 
           try {
-            await service.getOne({
+            await provider.getOne({
               id: 1,
               email: 'test@test.com',
             });
@@ -223,10 +223,10 @@ describe('UsersService', () => {
           const mockUsersRepository = {
             findOne: jest.fn().mockRejectedValue(new Error('test error')),
           };
-          const service = await mockDependencies({ mockUsersRepository });
+          const provider = await mockDependencies({ mockUsersRepository });
 
           try {
-            await service.getOne({
+            await provider.getOne({
               id: 1,
               email: 'test@test.com',
             });

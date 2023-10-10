@@ -8,7 +8,7 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { Public, Roles } from 'src/decorators';
+import { Roles } from 'src/decorators';
 import {
   GetAllMoviesSchema,
   CreateMovieSchema,
@@ -25,7 +25,6 @@ import { DeleteResponse } from 'src/services/movies/types';
 export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
 
-  @Public()
   @Get()
   async getAll(
     @Query() getAllMoviesSchema: GetAllMoviesSchema,
