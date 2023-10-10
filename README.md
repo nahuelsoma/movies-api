@@ -27,7 +27,7 @@ npm ci
 
 #### 3. Add environment variables to a .env file in the project's root directory. Make sure to define the following variables
 
-- `DATABASE_URL_DEV`: The PostgreSQL database connection URL.
+- `DATABASE_URL_DEV`: `postgresql://postgres-user:postgres-password@localhost:5432/postgres-movies-database`
 - `AUTH_SECRET`: A secret string for authentication (can be any secure value).
 
 #### 4. Start the Docker container with PostgreSQL and PgAdmin
