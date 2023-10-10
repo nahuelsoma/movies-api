@@ -1,12 +1,13 @@
 import { Logger, Module } from '@nestjs/common';
 import { AuthModule } from '../auth';
 import { MoviesModule } from '../movies';
-import { APP_FILTER } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import {
   PrismaKnownExceptionsFilter,
   PrismaValidationExceptionsFilter,
 } from 'src/filters/prisma-exceptions';
 import { AxiosExceptionsFilter } from 'src/filters/axios-exceptions';
+import { RolesGuard } from 'src/guards/roles';
 
 @Module({
   providers: [
@@ -21,6 +22,10 @@ import { AxiosExceptionsFilter } from 'src/filters/axios-exceptions';
     {
       provide: APP_FILTER,
       useClass: AxiosExceptionsFilter,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
     },
     Logger,
   ],
