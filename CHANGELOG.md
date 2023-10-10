@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.1.0] - 2023-10-10
+
 - Add Readme ([#12](https://github.com/nahuelsoma/movies-api/pull/12))
 - Add Swagger ([#11](https://github.com/nahuelsoma/movies-api/pull/11))
 - Add e2e tests ([#10](https://github.com/nahuelsoma/movies-api/pull/10))
