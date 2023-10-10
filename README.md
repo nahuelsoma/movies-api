@@ -33,7 +33,9 @@ git clone https://github.com/nahuelsoma/movies-api.git
 npm ci
 ```
 
-#### 3. Add environment variables to a .env file in the project's root directory. Make sure to define the following variables
+#### 3. Add environment variables
+
+Create a `.env` file in the project's root directory. Make sure to define the following variables:
 
 ##### Database variables
 
@@ -84,10 +86,6 @@ To populate the database, make a `POST` request to the `http://localhost:3000/mo
 This endpoint is only available for the `admin` role and requires a valid JWT token to be passed in the `Authorization` header.
 
 Sign up as a new `admin` user and then log in to get a valid JWT token to perform this request.
-
-## API Documentation
-
-Swagger documentation is available at: `http://localhost:3000/api/`
 
 ## Running Tests
 
