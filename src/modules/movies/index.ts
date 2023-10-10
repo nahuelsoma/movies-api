@@ -7,7 +7,12 @@ import { Database } from 'src/infrastructure/database';
 import { HttpModule } from '@nestjs/axios';
 
 @Module({
-  imports: [HttpModule],
+  imports: [
+    HttpModule.register({
+      timeout: 10000,
+      maxRedirects: 5,
+    }),
+  ],
   controllers: [MoviesController],
   providers: [
     Database,
